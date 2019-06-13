@@ -1,0 +1,83 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<algorithm>
+using namespace std;
+
+int main()
+{
+	/*fstream outFile;
+	string outputFileName="text.txt";
+	outFile.open(outputFileName,ios::out);
+	
+	if(outFile.is_open()){
+		outFile<<"Robin"<<endl;
+		outFile<<"CMPT135"<<endl;
+		outFile.close();
+	}
+	else
+		cout<<"Could not creat file: "<<outputFileName<<endl;*/
+	int count=1;
+	string s;
+	ifstream fin("text.txt");
+	if(fin.is_open())
+	{
+		fin>>s;
+		while(!fin.eof())
+		{
+			fin>>s;
+			count++;
+		}
+		fin.close();
+	}
+	else
+		cout<<"couldn't open";
+	cout<<count<<endl;
+	
+	string *p=new string[count];
+	fin.open("text.txt");
+	if(!fin.fail())
+	{
+		for(int i=0;i<count;i++)
+		{
+			fin>>p[i];
+			cout<<p[i]<<endl;
+		}
+		fin.close();
+	fin.open("text.txt");
+	if(!fin.fail())
+	{
+		for(int i=0;i<count/2;i++)
+		{
+			swap(p[i],p[count-1-i]);
+
+		}
+	
+		ofstream fout("text.txt");
+		if(fout.is_open())
+		{
+			for(int i=0;i<count;i++)
+				fout<<p[i]<<endl;
+			fout.close();
+		}
+	}
+		else
+			cout<<"could not open";
+struct Students{
+		string fName,lName;
+		double test,mid,fin,total;
+		char grade;
+	};
+	int main()
+	{
+		
+		ifstream infile("ClassList");
+		ofstream outfile("ClassList");
+		if(infile.fail()||outfile.fail())
+		{
+			cout<<"could not open";
+			return 0;
+		}
+		Students s[5];
+
+
