@@ -1,0 +1,107 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<cstdlib>
+#include<ctime>
+
+using namespace std;
+
+void Q1()
+{
+    string fname,lname;
+    double exercises,projects,exam,total;
+    char grade;
+    ofstream fout("Result.txt");
+    ifstream fin("ClassList.txt");
+    if (fout.fail()) {
+        cout<<"Output stream is fail"<<endl;
+        return;
+    }
+    if (fin.fail()) {
+        cout<<"Input stream is fail"<<endl;
+        return;
+    }
+    while (fin.eof()==false) {
+        fin>>fname>>lname>>exercises>>projects>>exam;
+        total=exercises+projects+exam;
+        if (total>=90) {
+            grade='A';
+        }
+        else if(total>=75)
+        {
+            grade='B';
+        }
+        else if (total>=65)
+        {
+            grade='C';
+        }
+        else if (total>=50)
+        {
+            grade='D';
+        }
+        else
+            grade='F';
+        fout<<fname<<" "<<lname<<"\t"<<exercises<<"\t"<<projects<<"\t"<<exam<<"\t"<<grade<<endl;
+    }
+    fout.close();
+    fin.close();
+}
+struct Student
+{
+    string fname,lname;
+    double exercises,projects,exam,total;
+    char grade;
+};
+void Q2()
+{
+    ifstream fin("ClassList.txt");
+    if (fin.fail()) {
+        cout<<"Input stream is fail"<<endl;
+        return;
+    }
+    int count;
+    string temp;
+    while (fin.eof()==false)
+    {
+        fin>>temp;
+        count++;
+    }
+    fin.close();
+    if (count==0) {
+        return;
+    }
+    fin.open("ClassList.txt");
+    Student * arr_s=new Student[count];
+    count=0;
+    while (fin.eof()==false)
+    {
+        fin>>arr_s[count].fname>>arr_s[count].lname>>arr_s[count].exercises>>arr_s[count].projects>>arr_s[count].exam;
+        arr_s[count].total=arr_s[count].exercises+arr_s[count].projects+arr_s[count].exam;
+        if (arr_s[count].total>=90) {
+            arr_s[count].grade='A';
+        }
+        else if(arr_s[count].total>=75)
+        {
+            arr_s[count].grade='B';
+        }
+        else if (arr_s[count].total>=65)
+        {
+            arr_s[count].grade='C';
+        }
+        else if (arr_s[count].total>=50)
+        {
+            arr_s[count].grade='D';
+        }
+        else
+            arr_s[count].grade='F';
+        count++;
+    }
+    fin.close();
+    ofstream fout("ClassList.txt");
+    for (int i=0; i<count; i++) {
+        fout<<arr_s[i].fname<<" "<<arr_s[i].lname<<"\t"<<arr_s[i].exercises<<"\t"<<arr_s[i].projects<<"\t"<<arr_s[i].exam<<"\t"<<arr_s[i].grade<<endl;
+    }
+    fout.close();
+    delete [] arr_s;
+    return;
+}
