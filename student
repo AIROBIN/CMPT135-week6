@@ -1,0 +1,63 @@
+#include<iostream>
+#include<fstream>
+
+using namespace std;
+
+struct Student{
+	string fName,lName;
+	int test,mid,final,total;
+	char grade;
+};
+
+int main()
+{
+fstream.fin("marks.txt",ios::in);
+if(fin.fail())
+{
+	cout<<"could not open";
+	return 0;
+}
+string lable[7];
+for(int i=0;i<7;i++)
+	fin>>lable[i];
+Student s[5];
+//read
+
+//while(!fin.eof()){
+
+for(int i=0;i<4;i++)
+{
+	fin>>s[i].fName>>s[i].lName>>s[i].test>>s[i].mid>>s[i].final;
+	s[i].total=s[i].test+s[i].mid+s[i].final;
+	s[i].grade=compute(s[i].total);
+}
+
+}
+//overwrite
+fin.open("marks.txt",ios::out);
+//if......
+
+for(int i=0;i<4;i++)
+{
+	bool check=true;
+	for(int j=0;j<4-1-i;j++)
+	{
+		if(s[j].total>s[j+1].total)
+		{
+			Student temp=s[j];
+			s[j]=s[j+1];
+			s[j+1]=temp;
+			check=false;
+		}
+	}
+	if(check=true) break;
+}
+
+
+
+for(int i=0;i<4;i++)
+	//fin<<s[i].......
+fin.close();
+
+
+
