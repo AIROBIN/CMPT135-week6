@@ -1,0 +1,77 @@
+#include<iostream>
+using namespace std;
+
+typedef NodePtr
+
+
+struct Node{
+	int d;
+	Node* next;
+};
+	
+void deleteLastNode(NodePtr& p)
+{
+	if(p==0)
+		return;
+	if(p->next==0)
+	{
+		delete p;
+		p=0;
+
+	}
+	NodePtr iter=p;
+	while(iter->next->next!=NULL)
+	{
+		iter=iter->next;
+	}
+	delete iter->next;
+	iter->next=0;
+}
+void deleteFirstNode(NodePtr& p)
+{
+	if(p==0)
+		return;
+	NodePtr temp=p;
+	p=p->next;
+	delete temp;
+}
+void insertFirstNode(NodePtr& p,int newD)
+{
+	if(p==0)
+		return;
+	NodePtr newN=new NodePtr;
+	newN->d=newD;
+	newN->next=p;
+	p=newN;
+}
+void deleteAllEven(NodePtr& p)
+
+
+
+void insertLastNode(NodePtr& p,int newd)
+{
+	if(p==0){
+		p=newd;
+		return;
+	}
+	Node* iter=p;
+	Node* newN=new Node;
+	newN->d=newd;
+	newN->next=NULL;
+	while(p->next!=NULL)
+		p=p->next;
+	p->next=newN;
+}
+
+
+int main()
+{
+
+
+
+
+
+	
+system("Pause");
+return 0;
+}
