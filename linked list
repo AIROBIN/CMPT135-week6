@@ -1,0 +1,125 @@
+#include<iostream>
+using namespace std;
+
+struct Node
+{
+	int data;
+	Node *next;
+}
+void intput_output()
+{
+	// input and output linked list 
+	Node *head=new Node;
+	Node *r=new Node;
+	Node*p;
+	int x;
+	cin>>x;
+	while(x!=-1){
+		p=new Node;
+		p->data=x;
+		p->next=NULL;
+		r->next=p;
+		r=p;
+	}
+	p=head->next;
+	while(p->next!=NULL){
+		cout<<p->data<<" ";
+		p=p->next;
+	}
+	cout<<p->data<<endl;
+	//search
+	p=head->next;
+	while(p->next!=NULL){
+		if(p->data==x)
+			x=0;
+		p=p->next;
+	}
+	void get(Node*head,int i)
+	{
+		Node*p=head;
+		int j
+		for(j=0;j<i&&p!=NULL;j++)
+			p=p->next;
+		if(j==i&&p!=NULL)
+			cout<<p->data;
+		else
+			cout<<"i not exist";
+	}
+	void insert(Node *head,int i,int x)
+	{
+		Node *p=head;
+		for(int j=0;j<i-1&&p!=NULL;j++)
+			p=p->next;
+		if(p=NULL)
+			exit(1);
+		Node *s=new Node;
+		s->data=x;
+		s->next=p->next;
+		p->next=s;
+	}
+	void delete(Node *head,int i)
+	{
+		Node *p=head;
+		for(int j=0;j<i-1&&p->next!=NULL;j++)
+			p=p->next;
+		if(p==NULL)
+			system("exit");
+		Node *s=p->next;
+		p->next=p->next->next;
+		delete[] s;
+	}
+	int len(Node *head)
+	{
+		int i=0;
+		Node*p=head;
+		while(p->next!=NULL){
+			p=p->next;
+			i++;
+		}
+		return i;
+	}
+	struct node{
+		int data;
+		node *pre,*next;
+	};
+	void insert(Node*head,int i,int x)
+	{
+		node*s=new node;
+		node*p=head;
+		s->data=x;
+		for(int j=0;j<i&&p->next!=NULL;j++)
+			p=p->next;
+		if(p==NULL)
+			system("exit");
+		s=->pre=p->pre;
+		s=p->pre;
+		s->next=p;
+		p->pre->next=s;
+	}
+	void delete(node*head,int i)
+	{
+		node*p=head;
+		for(int j=0;j<i&&p->next!=NULL;j++)
+			p=p->next;
+		if(p==NULL)
+			system("exit");
+		p->pre->next=p->next;
+		p->next->pre=p-pre;
+	}
+
+
+		
+		
+
+
+
+
+
+
+
+
+	
+
+
+
+
