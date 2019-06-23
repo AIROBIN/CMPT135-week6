@@ -1,0 +1,789 @@
+#include <iostream>
+#include<assert.h>
+using namespace std;
+class CMPT135_String
+{
+private:
+	char* buffer; //This will be the dynamic array to hold the characters
+public:
+	//static member function to compute the length of null-terminated char arrays
+	static int cstrlen(const char* cStr);
+	//Constructors
+	CMPT135_String();
+	CMPT135_String(const char& c);
+	CMPT135_String(const char* cStr); //*cStr is a null-terminated char array
+	CMPT135_String(const CMPT135_String& s);
+	//Destructor
+	~CMPT135_String();
+	//Assignment operators
+	CMPT135_String& operator= (const CMPT135_String& s);
+	CMPT135_String& operator= (const char& c);
+	CMPT135_String& operator= (const char* cStr); //*cStr is a null-terminated char array
+	//Getter member functions
+	int getLength() const;
+	char& operator[](const int& index) const;
+	//Setter member functions
+	void append(const CMPT135_String& s);
+	void append(const char& c);
+	void append(const char* cStr); //*cStr is a null-terminated char array
+	//Other member functions
+	int findCharIndex(const char& c) const;
+	int reverseFindCharIndex(const char& c) const;
+	CMPT135_String getSubString(const int& startIndex, const int& len) const;
+	bool isSubString(const CMPT135_String& s) const;
+	bool isSubString(const char* cStr) const; //*cStr is a null-terminated char array
+	void reverse();
+	int countChar(const char c);
+	void removeChar(const char& c);
+	void replaceChar(const char& c1, const char& c2);
+	//Operator member functions
+	CMPT135_String operator+ (const CMPT135_String& s) const;
+	CMPT135_String operator+ (const char* cStr) const; //*cStr is a null-terminated char array
+	CMPT135_String operator+ (const char& c) const;
+	CMPT135_String& operator+= (const CMPT135_String& s);
+	CMPT135_String& operator+= (const char* cStr); //*cStr is a null-terminated char array
+	CMPT135_String& operator+= (const char& c);
+	bool operator== (const CMPT135_String& s) const;
+	bool operator== (const char* cStr) const; //*cStr is a null-terminated char array
+	bool operator!= (const CMPT135_String& s) const;
+	bool operator!= (const char* cStr) const; //*cStr is a null-terminated char array
+	bool operator< (const CMPT135_String& s) const;
+	bool operator< (const char* cStr) const; //*cStr is a null-terminated char array
+	bool operator> (const CMPT135_String& s) const;
+	bool operator> (const char* cStr) const; //*cStr is a null-terminated char array
+	bool operator<= (const CMPT135_String& s) const;
+	bool operator<= (const char* cStr) const; //*cStr is a null-terminated char array
+	bool operator>= (const CMPT135_String& s) const;
+	bool operator>= (const char* cStr) const; //*cStr is a null-terminated char array
+	//Friend Functions (for operators)
+	friend CMPT135_String operator+ (const char* cStr, const CMPT135_String& s);
+	//*cStr is a null-terminated char array
+	friend CMPT135_String operator+ (const char& c, const CMPT135_String& s);
+	friend bool operator== (const char* cStr, const CMPT135_String& s);
+	//*cStr a null-terminated char array
+	friend bool operator!= (const char* cStr, const CMPT135_String& s);
+	//*cStr is a null-terminated char array
+	friend bool operator< (const char* cStr, const CMPT135_String& s);
+	//*cStr is a null-terminated char array
+	friend bool operator> (const char* cStr, const CMPT135_String& s);
+	//*cStr is a null-terminated char array
+	friend bool operator<= (const char* cStr, const CMPT135_String& s);
+	//*cStr is a null-terminated char array
+	friend bool operator>= (const char* cStr, const CMPT135_String& s);
+	//*cStr is a null-terminated char array
+	friend ostream& operator<< (ostream& outputStream, const CMPT135_String& s);
+	friend istream& operator>> (istream& inputStream, CMPT135_String& s);
+};
+
+int CMPT135_String::cstrlen(const char* cStr)
+{
+	if (cStr == nullptr) return 0;
+	int len = 0;
+	while (cStr[len] != '\0') len++;
+	return len;
+}
+//Constructors
+CMPT135_String::CMPT135_String()
+{
+	buffer = nullptr;
+}
+CMPT135_String::CMPT135_String(const char& c)
+{
+	buffer = new char[2];
+	buffer[0] = c;
+	buffer[1] = '\0';
+}
+CMPT135_String::CMPT135_String(const char* cStr) //*cStr is a null-terminated char array
+{
+	/*
+	This function constructs a non-default CMPT135_String that contains all the printable
+	characters of the argument and a null character at the end.
+	*/
+	int len=CMPT135_String::cstrlen(cStr);
+	buffer=new char[len+1];
+	for(int i=0;i<len;i++)
+		buffer[i]=cStr[i];
+	buffer[len]='\0';         // why not i<=len
+}
+CMPT135_String::CMPT135_String(const CMPT135_String& s)
+{
+	/*
+	This function constructs a CMPT135_String object which is a copy of the argument s
+	*/
+	int len=CMPT135_String::cstrlen(s.buffer);
+	buffer=new char[len+1];
+	for(int i=0;i<len;i++)
+		buffer[i]=s.buffer[i];
+	buffer[len]='\0';
+}
+
+//Destructor
+CMPT135_String::~CMPT135_String()
+{
+	if (buffer != nullptr)
+	{
+		delete[] buffer;
+		buffer = nullptr;
+	}
+}
+//Assignment operators
+CMPT135_String& CMPT135_String::operator= (const CMPT135_String& s)
+{              
+	if(this==&s)
+		return *this;
+	if(buffer!=NULL)
+		delete[] buffer;
+	int s_len=CMPT135_String::cstrlen(s.buffer);
+	buffer=new char[s_len+1];
+	for(int i=0;i<=s_len;i++)
+		buffer[i]=s.buffer[i];
+	return *this;
+}
+CMPT135_String& CMPT135_String::operator= (const char& c)
+{
+	//if(buffer!=NULL)
+	   //delete[] buffer;
+	CMPT135_String s(c);
+	*this=s;
+	return *this;
+}
+CMPT135_String& CMPT135_String::operator= (const char* cStr) //*cStr is a null-terminated char array
+{
+	//if(buffer!=NULL)
+	   //delete[] buffer;
+	CMPT135_String s(cStr);
+	*this=s;
+	return *this;
+}
+//Getter member functions
+int CMPT135_String::getLength() const
+{
+	return CMPT135_String::cstrlen(buffer);
+}
+char& CMPT135_String::operator[](const int& index) const
+{
+	//precondition:index<len
+	//postconditon: get a character if index is not out of bound
+	int len=CMPT135_String::cstrlen(buffer);
+	assert(index<len);
+		
+	return this->buffer[index];
+}
+//Setter member functions
+void CMPT135_String::append(const CMPT135_String& s)
+{
+	append(s.buffer);
+}
+void CMPT135_String::append(const char& c)
+{
+	int len=CMPT135_String::cstrlen(buffer);
+	char*s=new char[len+2];
+	for(int i=0;i<len;i++)
+		s[i]=buffer[i];
+	s[len]=c;
+	s[len+1]='\0';
+	delete[] buffer;
+	buffer=s;
+}
+void CMPT135_String::append(const char* cStr) //*cStr is a null-terminated char array
+{
+	int len=CMPT135_String::cstrlen(cStr);
+	for(int i=0;i<len;i++)
+		append(cStr[i]);
+}
+//Other member functions
+int CMPT135_String::findCharIndex(const char& c) const
+{
+	/*
+	This function returns the smallest valid index of the calling object such that the character
+	of the calling object at that index is equal to the character argument. If no such index exists,
+	then this function returns -1
+	*/
+	
+	int len=CMPT135_String::cstrlen(buffer);
+	for(int i=0;i<len;i++)
+	{
+		if(buffer[i]==c)
+			return i;
+	}
+	return -1;
+}
+int CMPT135_String::reverseFindCharIndex(const char& c) const
+{
+	/*
+	This function returns the largest valid index of the calling object such that the character
+	of the calling object at that index is equal to the character argument. If no such index exists,
+	then this function returns -1
+	*/
+	int len=CMPT135_String::cstrlen(buffer);
+	for(int i=len-1;i>=0;i--)        
+	{
+		if(buffer[i]==c)
+			return i;             
+	}
+	return -1;
+}
+CMPT135_String CMPT135_String::getSubString(const int& startIndex, const int& length) const
+{
+	/*
+	This function returns a substring of the calling object starting from the given startIndex
+	and whose length is given by the length argument. If there are no enough characters starting
+	from the given start index, then this function will return only the available characters.
+	*/
+	//precondition:starIndex<length of buffer&& parameter length>=0
+	//postconditon: get a  object of substring if it exists available characters 
+	int len=CMPT135_String::cstrlen(buffer);
+	assert(startIndex<len&&length>=0);
+	char *s=new char[length+1];
+	int i,j;
+	for(i=0,j=startIndex; i<length&&j<len ;i++, j++)		
+		s[i]=buffer[j];
+	s[i] = '\0';
+	return CMPT135_String(s);
+
+}
+bool CMPT135_String::isSubString(const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is a substring of the argument s.
+	If it is it returns true otherwise it returns false
+	*/
+	//precondition: buffer!=NULL&&s.buffer!=NULL
+	//postconditon: return true if s is a substring of calling object, otherwise return false 
+	assert(buffer!=NULL&&s.buffer!=NULL);
+	int len=CMPT135_String::cstrlen(buffer);            
+	int s_len=CMPT135_String::cstrlen(s.buffer);           
+	for(int i=0;i<=s_len-len;i++)
+	{
+		int j;
+		for(j=0;j<len;j++)
+		{	
+			if(s.buffer[i+j]!=buffer[j])        
+				break;
+		}
+		if(j==len)
+			return true;	
+	}
+	return false;
+}
+bool CMPT135_String::isSubString(const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is a substring of the argument null-terminated
+	character
+	array. If it is it returns true otherwise it returns false
+	*/
+	CMPT135_String s(cStr);
+	return isSubString(s);
+}
+void CMPT135_String::reverse()
+{
+	//precondition:*this!=NULL
+	//postconditon: reverse the buffer of calling object
+	assert(*this!=NULL);
+	int len=CMPT135_String::cstrlen(buffer);
+	char *temp=new char[len+1];
+	for(int i=0,j=len-1;i<len;i++,j--)
+		temp[i]=buffer[j];
+	temp[len]='\0';
+	delete[] buffer;
+	buffer=temp;
+}
+int CMPT135_String::countChar(const char c)
+{
+	int len=CMPT135_String::cstrlen(buffer);
+	int count=0;
+	for(int i=0;i<len;i++)
+		if(buffer[i]==c)
+			count++;
+	return count;
+}
+void CMPT135_String::removeChar(const char& c)
+{
+	//precondition:buffer!=NULL
+	//postconditon: remove c in the buffer of calling object if buffer is valid
+	assert(buffer!=NULL);
+	int len=CMPT135_String::cstrlen(buffer);
+	int count=countChar(c),index=0;
+	char*s=new char[len-count+1];
+	for(int i=0;i<len;i++)
+	{
+		if(buffer[i]!=c)
+		{
+			s[index]=buffer[i];
+			index++;
+		}
+	}
+	s[len-count]='\0';
+	delete[] buffer;
+	buffer=s;
+}
+void CMPT135_String::replaceChar(const char& c1, const char& c2)
+{
+	/*
+	This function replaces every occurence of the argument character c1 in the calling object by
+	the argument character c2
+	*/
+	//precondition:buffer!=NULL
+	//postconditon: replace c1 by c2 in the buffer of calling object
+	assert(buffer!=NULL);
+	int len=CMPT135_String::cstrlen(buffer);
+	for(int i=0;i<len;i++)
+	{
+		if(buffer[i]==c1)
+			buffer[i]=c2;
+	}
+}
+//Operator member functions
+CMPT135_String CMPT135_String::operator+ (const CMPT135_String& s) const
+{
+	/*
+	This function returns a new CMPT135_String object made up all the characters of the
+	calling object followed by the characters of the argument s
+	*/
+	return operator+(s.buffer);  
+}
+CMPT135_String CMPT135_String::operator+ (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function returns a new CMPT135_String object made up all the characters of the
+	calling object followed by the characters of the null-terminated character array argument cStr
+	*/
+      CMPT135_String temp=*this;
+	  temp.append(cStr);
+	  return temp;
+}
+CMPT135_String CMPT135_String::operator+ (const char& c) const
+{
+	/*
+	This function returns a new CMPT135_String object made up all the characters of the
+	calling object followed by the character argument c
+	*/
+	CMPT135_String s(c); 
+	return *this+s;
+}
+CMPT135_String& CMPT135_String::operator+= (const CMPT135_String& s)
+{
+	/*
+	This function appends a copy of the characters of s to the calling object and then
+	returns the calling object
+	*/
+	append(s);   //*this=*this+s;
+	return *this;
+}
+
+CMPT135_String& CMPT135_String::operator+= (const char* cStr) //*cStr is a null-terminated char array
+{
+	/*
+	This function appends a copy of the characters of the null-terminated character array cStr
+	to the calling object and then returns the calling object
+	*/
+	append(cStr);
+	return *this;
+}
+CMPT135_String& CMPT135_String::operator+= (const char& c)
+{
+	/*
+	This function appends a copy of the character c to the calling object and then
+	returns the calling object
+	*/
+	append(c);
+	return *this;
+}
+bool CMPT135_String::operator== (const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is equal to the argument s
+	NOTE:- Two CMPT135_String are equal if they have the same length and characters of the
+	calling object are equal to the characters of the argument s at corresponding indexes.
+	*/
+	return this->isSubString(s)&&s.isSubString(*this); 
+}
+bool CMPT135_String::operator== (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is equal to the null-terminated character array cStr
+	*/
+	CMPT135_String s(cStr);
+	return operator==(s);         
+
+}
+bool CMPT135_String::operator!= (const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is not equal to the argument s
+	*/
+	return !(*this==s);
+}
+bool CMPT135_String::operator!= (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is not equal to the null-terminated character array
+	cStr
+	*/
+	return !(*this==cStr);
+}
+bool CMPT135_String::operator< (const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is less than the argument s
+	NOTE:- Given two CMPT135_String objects s1 and s2, we say s1 < s2 if there
+	exists a valid index i such that s1[i] < s2[i]. If no such an index exists,
+	then we still say s1 < s2 only if length of s1 is less than length of s2.
+	Otherwise s1 is not less than s2.
+	*/
+	int len=CMPT135_String::cstrlen(buffer);
+	int s_len=CMPT135_String::cstrlen(s.buffer);
+	if(len<s_len)
+		return true;
+	for(int i=0;i<s_len;i++)
+	{
+		if(buffer[i]<s.buffer[i])
+			return true;
+	}
+	return false;
+}
+bool CMPT135_String::operator< (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is less than the null-terminated character array cStr
+	*/
+	CMPT135_String s(cStr);
+	return *this<(s);
+}
+
+bool CMPT135_String::operator> (const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is greater than the argument s
+	*/
+	return !(*this<s||*this==s);
+}
+bool CMPT135_String::operator> (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is greater than the null-terminated character array
+	cStr
+	*/
+	return !(*this<cStr||*this==cStr);
+}
+bool CMPT135_String::operator<= (const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is less than or equal to the argument s
+	*/
+	return !(*this>s);
+}
+bool CMPT135_String::operator<= (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is less than or equal to the null-terminated character
+	array cStr
+	*/
+	return !(*this>cStr);
+}
+bool CMPT135_String::operator>= (const CMPT135_String& s) const
+{
+	/*
+	This function tests if the calling object is greater than or equal to the argument s
+	*/
+	return !(*this<s);
+}
+bool CMPT135_String::operator>= (const char* cStr) const //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the calling object is greater than or equal to the null-terminated
+	character array cStr
+	*/
+	return !(*this<cStr);
+}
+//Friend Functions (for operators)
+CMPT135_String operator+ (const char* cStr, const CMPT135_String& s) 
+	//*cStr is a null-terminated char array
+{
+	/*
+	This function returns a new CMPT135_String object whose characters are those of the null
+	terminated character array argument cStr followed by those of s
+	*/
+	CMPT135_String temp(cStr);
+	return temp+s;
+}
+CMPT135_String operator+ (const char& c, const CMPT135_String& s)
+{
+	/*
+	This function returns a new CMPT135_String object whose characters are that of character
+	argument c followed by those of s
+	*/
+	CMPT135_String temp(c);
+	return temp+s;
+}
+
+bool operator== (const char* cStr, const CMPT135_String& s) //*cStr a null-terminated char array
+{
+	/*
+	This function tests if the null-terminated character array argument cStr is equal to s
+	*/
+	return s==cStr;
+}
+bool operator!= (const char* cStr, const CMPT135_String& s) //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the null-terminated character array argument cStr is not equal to s
+	*/
+	return s!=cStr;
+}
+bool operator< (const char* cStr, const CMPT135_String& s) //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the null-terminated character array argument cStr is less than s
+	*/
+	return s>cStr;      
+}
+bool operator> (const char* cStr, const CMPT135_String& s) //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the null-terminated character array argument cStr is greater than s
+	*/
+	return s<cStr;
+}
+bool operator<= (const char* cStr, const CMPT135_String& s) //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the null-terminated character array argument cStr is less than or equal
+	to s
+	*/
+	return s>=cStr;
+}
+bool operator>= (const char* cStr, const CMPT135_String& s) //*cStr is a null-terminated char array
+{
+	/*
+	This function tests if the null-terminated character array argument cStr is greater than or
+	equal to s
+	*/
+	return s<=cStr;
+}
+ostream& operator<< (ostream& outputStream, const CMPT135_String& s)
+{
+	/*
+	This function prints the characters in the dynamic array member variable buffer.
+	This function is implemented by the instructor. MAKING ANY CHANGE TO IT IS NOT ALLOWED.
+	*/
+	for (int i = 0; i < s.getLength(); i++)
+		outputStream << s.buffer[i];
+	return outputStream;
+}
+
+istream& operator>> (istream& inputStream, CMPT135_String& s)
+{
+	/*
+	This function is designed to read ANY number of characters from the user.
+	Reading will stop when the user presses the Enter Key.
+	In order to achieve this, we will read one character at a time
+	until end of line character ('\n') is read.
+	The trouble will be where to store unknown number of characters input.
+	For this, we will create a char array (named buffer) of length 5.
+	If the array gets full as the user types characters from the keyboard, then
+	we will expand the size of buffer array to twice its size and continue reading.
+	We will keep on expanding it every time it gets full.
+	Finally, we will copy all characters read to s object. We will also do some
+	memory clean up of unnecessary allocated memory.
+	This function is implemented by the instructor. MAKING ANY CHANGE TO IT IS NOT ALLOWED.
+	*/
+	int bufferCurrentLength = 5;
+	char* buffer = new char[bufferCurrentLength];
+	int length = 0;
+	char c;
+	while (true)
+	{
+		inputStream.get(c);
+		if (c == '\n')
+			break;
+		//Check if the buffer is full. If yes expand it in order
+		//to make room for the new character to be appended.
+		if (length == bufferCurrentLength)
+		{
+			//Allocate expanded memory space
+			char* temp = new char[2*bufferCurrentLength];
+			for (int i = 0; i < bufferCurrentLength; i++)
+				temp[i] = buffer[i];
+			//Delete current buffer
+			delete[] buffer;
+			//Point buffer to temp
+			buffer = temp;
+			//Adjust the size of the current buffer
+			bufferCurrentLength *= 2;
+		}
+		buffer[length++] = c;
+	}
+	//Destruct s
+	s.~CMPT135_String();
+	//Now allocate the exact memory size for s and copy characters of buffer to s
+	if (length > 0)
+	{
+		s.buffer = new char[length + 1];
+		for (int i = 0; i < length; i++)
+			s.buffer[i] = buffer[i];
+		s.buffer[length] = '\0';
+	}
+	//Finally delete the allocated memory for buffer
+	delete[] buffer;
+	//Return the input stream
+	return inputStream;
+}
+
+
+
+void test()
+{
+	//Test the cstrlen static member function'
+	cout << "The length of \"Vancouver\" is " << CMPT135_String::cstrlen("Vancouver") << endl;
+	cout << "The length of \"\" is " << CMPT135_String::cstrlen("") << endl;
+	cout << "The length of nullptr is " << CMPT135_String::cstrlen(nullptr) << endl;
+	cout << endl;
+	//Test default constructor and getLength member functions
+	CMPT135_String s1;
+	cout << "s1 is \"" << s1 << "\" and its length is " << s1.getLength() << endl;
+	cout << endl;
+	//Test non-default constructor and getLength member functions
+	CMPT135_String s2 = 'Y';
+	cout << "s2 is \"" << s2 << "\" and its length is " << s2.getLength() << endl;
+	cout << endl;
+	//Test non-default constructor and getLength member functions
+	CMPT135_String s3 = "CMPT 135";
+	cout << "s3 is \"" << s3 << "\" and its length is " << s3.getLength() << endl;
+	//Test copy constructor and getLength member functions
+	CMPT135_String s4 = s3;
+	cout << "s4 is \"" << s4 << "\" and its length is " << s4.getLength() << endl;
+	//Test destructor and getLength member functions
+	s4.~CMPT135_String();
+	cout << "s4 is \"" << s4 << "\" and its length is " << s4.getLength() << endl;
+	//Test assignment operator and getLength member functions
+	s4 = s2;
+	cout << "s4 is \"" << s4 << "\" and its length is " << s4.getLength() << endl;
+	//Test assignment operator and getLength member functions
+	s4 = 'A';
+	cout << "s4 is \"" << s4 << "\" and its length is " << s4.getLength() << endl;
+	//Test assignment operator and getLength member functions
+	s4 = "This is cool";
+	cout << "s4 is \"" << s4 << "\" and its length is " << s4.getLength() << endl;
+	//Test indexing operator
+	cout << "s4[2] is " << s4[2] << endl;
+	s4[2] = 'u';
+	cout << "s4[2] is " << s4[2] << endl;
+	cout << "s4 is \"" << s4 << "\" and its length is " << s4.getLength() << endl;
+	s1.append(s4);
+	cout << "s1 is \"" << s1 << "\" and its length is " << s1.getLength() << endl;
+	//Test append function and getLength member functions
+	s3.append(' ');
+	cout << "s3 is \"" << s3 << "\" and its length is " << s3.getLength() << endl;
+	//Test append function and getLength member functions
+	s3.append("201901");
+	cout << "s3 is \"" << s3 << "\" and its length is " << s3.getLength() << endl;
+	//Test findCharIndex function
+	char ch = '1';
+	int k = s3.findCharIndex(ch);
+	cout << "The first index of '" << ch << "' in \"" << s3 << "\" is " << k << endl;
+	ch = 'm';
+	k = s3.findCharIndex('m');
+	cout << "The first index of '" << ch << "' in \"" << s3 << "\" is " << k << endl;
+	//Test reverseFindCharIndex function
+	ch = '1';
+	k = s3.reverseFindCharIndex(ch);
+	cout << "The last index of '" << ch << "' in \"" << s3 << "\" is " << k << endl;
+	ch = 'm';
+	k = s3.reverseFindCharIndex('m');
+	cout << "The last index of '" << ch << "' in \"" << s3 << "\" is " << k << endl;
+	//Test getSubString function
+	s1 = s3.getSubString(10, 3);
+	cout << "s1 is \"" << s1 << "\" and its length is " << s1.getLength() << endl;
+	s1 = s3.getSubString(10, 5);
+	cout << "s1 is \"" << s1 << "\" and its length is " << s1.getLength() << endl;
+	s1 = s3.getSubString(10, 8);
+	cout << "s1 is \"" << s1 << "\" and its length is " << s1.getLength() << endl;
+	//Test isSubString function
+	if (s1.isSubString(s3) == true)
+		cout << "\"" << s1 << "\" is a substring of \"" << s3 << "\"" << endl;
+	else
+		cout << "\"" << s1 << "\" is not a substring of \"" << s3 << "\"" << endl;
+	s2 = "01902029010190";
+	if (s1.isSubString(s2) == true)
+		cout << "\"" << s1 << "\" is a substring of \"" << s2 << "\"" << endl;
+	else
+		cout << "\"" << s1 << "\" is not a substring of \"" << s2 << "\"" << endl;
+	char x[] = "01902019010190";
+	if (s1.isSubString(x) == true)
+		cout << "\"" << s1 << "\" is a substring of \"" << x << "\"" << endl;
+	else
+		cout << "\"" << s1 << "\" is not a substring of \"" << x << "\"" << endl;
+	//Test reverse function
+	cout << "s1 is \"" << s1 << "\" and its length is " << s1.getLength() << endl;
+	s1.reverse();
+	cout << "After reversing it, s1 is \"" << s1 << "\" and its length is " << s1.getLength() <<
+		endl;
+	//Test countChar function
+	ch = '1';
+	k = s1.countChar(ch);
+	cout << "'" << ch << "' appears " << k << " times in \"" << s1 << "\"" << endl;
+	//Test the removeChar function
+	cout << "After removing all the '" << ch << "' characters from \"" << s1 << "\", we get ";
+	s1.removeChar(ch);
+	cout << "\"" << s1 << "\"" << endl;
+	s3 = "11111111111";
+	cout << "After removing all the '" << ch << "' characters from \"" << s3 << "\", we get ";
+	s3.removeChar(ch);
+	cout << "\"" << s3 << "\"" << endl;
+	//Test replaceChar function
+	cout << "After replacing 1 by 5 from \"" << s2 << "\", we get ";
+	s2.replaceChar('1', '5');
+	cout << s2 << endl;
+	//Test + operator
+	cout << "s1 is \"" << s1 << "\", s3 is \"" << s3 << "\" and s1 + s3 is \"" << s1 + s3 << "\"" <<
+		endl;
+	cout << "s1 is \"" << s1 << " and s1 + \"Vancouver\" is \"" << s1 + "Vancouver" << endl;
+	cout << "s1 is \"" << s1 << " and s1 + 'Y' is \"" << s1 + 'Y' << endl;
+	//Test += operatror
+	s2 = "Test";
+	cout << "s1 is " << s1 <<", s2 is " << s2 << ", and s3 is " << s3 << endl;
+	s3 = s1 += s2;
+	cout << "After s3 = s1 += s2, we get s1 is " << s1 <<", s2 is " << s2 << ", and s3 is " << s3 <<
+		endl;
+	cout << "s2 is \"" << s2 << "\". ";
+	s2 += "FIC";
+	cout << "After s2 += \"FIC\", we get \"" << s2 << "\"" << endl;
+	cout << "s2 is \"" << s2 << "\". ";
+	s2 += '!';
+	cout << "After s2 += '!', we get \"" << s2 << "\"" << endl;
+	//Test relational operators
+	s1 = "Test1";
+	s2 = "";
+	cout << "s1 is \"" << s1 << "\", s2 is \"" << s2 << "\" and s1 == s2 is " << (s1 == s2) << endl;
+	cout << "s1 is \"" << s1 << "\", s2 is \"" << s2 << "\" and s1 != s2 is " << (s1 != s2) << endl;
+	cout << "s1 is \"" << s1 << "\", s2 is \"" << s2 << "\" and s1 > s2 is " << (s1 > s2) << endl;
+	cout << "s1 is \"" << s1 << "\", s2 is \"" << s2 << "\" and s1 < s2 is " << (s1 < s2) << endl;
+	cout << "s1 is \"" << s1 << "\", s2 is \"" << s2 << "\" and s1 >= s2 is " << (s1 >= s2) << endl;
+	cout << "s1 is \"" << s1 << "\", s2 is \"" << s2 << "\" and s1 <= s2 is " << (s1 <= s2) << endl;
+	//Test + friend functions
+	cout << "\"Vancouver\" + \"" << s1 << "\" is \"" << "Vancouver" + s1 << "\"" << endl;
+	cout << "'y' + \"" << s1 << "\" is \"" << 'y' + s1 << "\"" << endl;
+	//Test friend relational operators
+	cout << "s1 is \"" << s1 << "\" and \"Test2\" == s1 is " << ("Test2" == s1) << endl;
+	cout << "s1 is \"" << s1 << "\" and \"Test2\" != s1 is " << ("Test2" != s1) << endl;
+	cout << "s1 is \"" << s1 << "\" and \"Test2\" < s1 is " << ("Test2" < s1) << endl;
+	cout << "s1 is \"" << s1 << "\" and \"Test2\" > s1 is " << ("Test2" > s1) << endl;
+	cout << "s1 is \"" << s1 << "\" and \"Test2\" <= s1 is " << ("Test2" <= s1) << endl;
+	cout << "s1 is \"" << s1 << "\" and \"Test2\" >= s1 is " << ("Test2" >= s1) << endl;
+	//Test input stream operator
+	cout << "Enter a string of any length you want (including spaces, punctuation marks, etc if you wish):";
+	cin >> s1;
+	cout << "You entered \"" << s1 << "\"" << endl;
+
+	return ;
+}
+
+int main(){
+
+
+	test();
+	system("Pause");
+	return 0;
+};
