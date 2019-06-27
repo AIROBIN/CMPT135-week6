@@ -1,0 +1,53 @@
+#include<iostream>
+#include<fstream>
+#include<vector>
+
+using namespace std;
+
+struct Car{
+	char*s;
+	int price;
+	int year;
+};
+int main()
+{
+	ifstream fin("C:/Users/bokunl/Desktop/car.txt");
+	if(fin.fail())
+	{
+		cout<<"could not exist";
+		return 0;
+	}
+	vector<Car> a;
+	Car temp;
+	while(!fin.eof())
+	{
+
+		fin>>temp.s>>temp.price>>temp.year;
+		a.push_back(temp);
+	}
+	fin.close();
+	int size=a.size();
+	for(int i=0;i<size;i++)
+		for(int j=0;j<size-1-i;j++)
+			if(a[j].s>a[j+1].s)
+			{
+				Car temp=a[j];
+				a[j]=a[j+1];
+				a[j+1]=temp; 
+			}
+
+	ofstream fout("C:/Users/bokunl/Deskto/car.txt");
+	if(fout.fail())
+	{
+		cout<<"could not exist";
+		return 0;
+	}
+	for(int i=0;i<a.size();i++)
+		fout<<a[i].s<<a[i].price<<a[i].year;
+
+	fout.close();
+	system("Pause");
+	return 0;
+}
+
+
