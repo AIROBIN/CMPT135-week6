@@ -1,0 +1,107 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+class Money{
+private:
+	int cents,dollars;
+public:
+	Money(){cents=dollars=0;}   //Default constructor; sets cents and dollars to zero
+	Money(const int &c, const int &d){cents=c;dollars=d;}    //Non-default constructor; sets cents to c and dollars to d
+	Money(const Money &m){cents=m.cents;dollars=m.dollars;} //Copy constructor, copies cents and dollars of m to cents and dollars
+	int getCents() const{return cents;}//getter function to get cents
+	int getDollars() const{return dollars;} //getter function to get the dollars
+	void setCents(const int &c){cents=c;} //sets the cents to c
+	void setDollars(const int &d){dollars=d;} //sets the dollars to d
+	string toString() const //other member function to return money as $DOLLARS.CENTS
+	{
+		int count1=0,count2=0;
+		int d=dollars,c=cents;
+		while(d!=0){d/=10;count1++;}   //328
+		while(c!=0){c/=10;count2++;}
+		d=dollars,c=cents;
+		char* s=new char[count1+count2+3];
+		s[0]='$';
+		for(int i=count1;i>0;i--)
+		{
+			s[i]=d%10+'0';
+			d/=10;
+		}
+		s[count1+1]=',';
+		for(int i=count2;i>0;i--)
+		{
+			s[count1+1+i]=c%10+'0';
+			c/=10;
+		}
+		s[count1+count2+2]='\0';
+		return s;
+	}
+
+	float amount()const{return dollars+1.0*cents/100;} //other member function to return dollars + (float(cents)/100)
+	Money operator + (const Money &m) const{return Money(cents+m.cents,dollars+m.dollars);}//addition operator (add two Money objects)
+	Money operator - (const Money &m) const{return Money(cents-m.cents,dollars-m.dollars);}    //subtraction operator (subtract Money object from another)
+	Money& operator = (const Money &m){cents=m.cents;dollars=m.dollars;return *this;}//Assignment operator (assign Money object to another)
+	bool operator == (const Money &m) const{return (cents==m.cents&&dollars==m.dollars);}//equality test member operator
+	bool operator != (const Money &m) const{return !(*this==m);}//Inequality test member operator
+	bool operator > (const Money &m) const{
+		if(dollars>m.dollars)
+			return true;
+		else if(dollars==m.dollars&&cents>m.cents)
+			return true;
+		else
+			return false;
+	}
+	bool operator >= (const Money &m) const{return (*this>m)||(*this==m);}//Greater than or equal to test member operator
+	bool operator < (const Money &m) const{return !(*this>=m);} //Less than test member operator
+	bool operator <= (const Money &m) const{return !(*this>m);}//Less than or equal to test member operator
+	friend ostream& operator<<(ostream &outputStream, const Money &m){
+		outputStream<<m.dollars<<"."<<m.cents<<endl;
+		return outputStream;
+	}
+};
+
+
+	int stringtoint(char*str)
+	{
+		int i=0,result=0;
+		if(str[0]=='-')
+			i++;
+		while(str[i]!='\0')
+		{	
+			result=result*10+(str[i]-'0');
+			i++;
+		}
+		if(str[0]=='-')
+			result*=-1;
+		return result;
+	}
+		
+int  countDistinctChars(char *s)
+{
+	int L=0;
+	while(s[L]!='\0')
+		L++;
+	int c[26]={0};
+	for(int i=0;i<L;i++)
+		c[s[i]-'a']++;
+	int count=0;
+	for(int i=0;i<26;i++)
+		if(c[i]>0)
+			count++;
+	return count;
+}
+
+
+
+
+int main()
+{
+	Money m(345,678);
+	cout<<m.toString();
+	
+	
+	system("Pause");
+	return 0;
+}
+
+
