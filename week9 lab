@@ -1,0 +1,59 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+
+class BankAccount{
+	string name;
+	double balance;
+public:
+	void setn(const string& name){this->name=name;}
+	void setb(const double& balance){this->balance=balance;}
+	string getn()const {return name;}
+	double getb()const {return balance;}
+	BankAccount(){name="";balance=0;}
+	BankAccount(const string& name,const double& balance){
+		this->name=name;this->balance=balance;
+	}
+	BankAccount(const BankAccount& b){
+		name=b.name;balance=b.balance;
+	}
+	BankAccount& operator=(const BankAccount& b){
+		if(this==&b)
+			return *this;
+		name=b.name;
+		balance=b.balance;
+		return *this;
+}
+	~BankAccount(){}
+	friend ostream& operator<<(ostream& out,const BankAccount& b){
+		out<<b.name<<","<<b.balance<<endl;
+		return out;
+	}
+	friend istream& operator>>(istream& in,const BankAccount& b){
+		string m;
+		double n;
+		in>>m;
+		in>>n;
+		return in;
+	}
+};
+
+class ChequingAccount: public BankAccount{
+	int numTransactions;
+public:
+	ChequingAccount():BankAccount(){numTransactions=0;}
+	ChequingAccount(const ChequingAccount& c):BankAccount(c.getn(),c.getb()){numTransactions=0;}
+	void deposit(const double& amount){setb(getb()+amount);}
+	void chequing(const double& amount){setb(getb()-amount);}
+
+};
+
+class SavingAccount: public BankAccount{
+	double interestRate;
+	int numDays;
+public:
+	SavingAccount():BankAccount(){interestRate=0;numDays=0;}
+	SavingAccount(c
+
+
