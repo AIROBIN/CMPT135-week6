@@ -25,6 +25,7 @@ public:
 		balance=b.balance;
 		return *this;
 }
+	double getBalance(){return balance;}
 	~BankAccount(){}
 	friend ostream& operator<<(ostream& out,const BankAccount& b){
 		out<<b.name<<","<<b.balance<<endl;
@@ -46,6 +47,7 @@ public:
 	ChequingAccount(const ChequingAccount& c):BankAccount(c.getn(),c.getb()){numTransactions=0;}
 	void deposit(const double& amount){setb(getb()+amount);}
 	void chequing(const double& amount){setb(getb()-amount);}
+	double getBalance(){return BankAccount::getBalance();}
 
 };
 
@@ -54,6 +56,91 @@ class SavingAccount: public BankAccount{
 	int numDays;
 public:
 	SavingAccount():BankAccount(){interestRate=0;numDays=0;}
-	SavingAccount(c
+	SavingAccount(const interest& i,const numDays& n):BankAccount(){interstRate=i;numDays=n;}
+	SavingAccount(const SavingAccount& s):BankAccount(s.getn(),s.getb()){interstRate=s.interestRate;numDays=s.numDays;}
+	double getBalance(){return BankAccount::getBalance()+interestRate*numDays;}
+};
 
+class RECTANGLE
+{
+private:
+double length, width;
+public:
+RECTANGLE();
+RECTANGLE(const double &len, const double &wid);
+RECTANGLE(const RECTANGLE &r);
+double getLength() const;
+double getWidth() const;
+void setLength(const double &len);
+void setWidth(const double &wid);
+double getArea() const;
+double getPerimeter() const;
+friend ostream& operator << (ostream &outputStream, const RECTANGLE &r);
+friend istream& operator >> (istream &inputStream, RECTANGLE &r);
+};
+
+class SQUARE : public RECTANGLE
+{
+public:
+SQUARE():RECTANGLE(){}
+SQUARE(const double &s):RECTANGLE(s,s){}
+SQUARE(const SQUARE &s):RECTANGLE(s.getLength(),s.getWidth()){}
+double getSide() const{return getLength();}
+void setLength(const double &len){setLength(len);setWidth(len);}
+void setWidth(const double &wid){setLength(wid);setWidth(wid);}
+void setSide(const double &s){setLength(s.getLength());setWidth(s.getWidth());}
+friend ostream& operator << (ostream &outputStream, const SQUARE &s){
+	out<<s.getLength()<<endl;
+	return out;
+	}
+friend istream& operator >> (istream &inputStream, SQUARE &s){
+	double d;
+	in>>d;
+	s.setSide(d);
+	return in;
+	}
+};
+
+class  Ellipse{
+double  minorAxis, majorAxis;
+public:
+	Ellipse(){minorAxis=majorAxis=0.0;}
+	Ellipse(const double& ma,const double& mi){minorAxis=mi, majorAxis=ma;}
+	Ellipse(const Ellipse& e){minorAxis=e.minorAxis;majorAxis=e.majorAxis;}
+	void setMinor(const double& mi);
+	void setMajor(const double& ma);
+	double getMinor()const;
+	double getMajor()const;
+	Ellipse& operator=(const Ellipse& e){
+		if(this==&e) return *this;
+		minorAxis=e.minorAxis;majorAxis=e.majorAxis;
+		return *this;
+		}
+	double getArea(){return 3.14*minorAxis*majorAxis;}
+	double getCircumference(){return 2*3.14*sqrt((a*a+b*b)/2);}
+	frirend ostream& operator<<(ostream& out,const Ellipse& e){
+		out<<e.minorAxis<<e. majorAxis<<endl;
+		return out;
+		}
+	friend istream& operator>>(istream& in,conconst Ellipse& e){
+		double d;
+		in>>d; e.setMinor(d);
+		in>>d; e.setMajor(d);
+		return in;
+		}
+};
+class Circle: public Ellipse{
+public:
+	Circle():Ellipse(){}
+	Circle(const double& d):Ellipse(d,d){}
+	Circle(const Circle& c):Ellipse(c.getMinor(),c.getMajor()){}
+	Circle& operator=(const Circle& c){
+		if(this==&c) return *this;
+		setMinor(c.getMinor());setMajor(c.getMajor());
+		return *this;
+		}
+	void setRadius(const double& d){setMinor(d);setMajor(d);}
+	
+	
+	
 
