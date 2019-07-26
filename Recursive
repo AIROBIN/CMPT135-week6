@@ -1,0 +1,202 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<math.h>
+using namespace std;
+
+int xpower(int x,int n)
+{
+	if(n==0) return 1;
+	else return x*xpower(x,n-1);
+}
+int factorial(int n)
+{
+	return n==0?1: n*factorial(n-1);
+}
+int gcd(int a,int b)
+{
+	return b==0?a:gcd(b,a%b);
+}
+
+//bool flag;
+bool sum(int a[],int size,int m)
+{
+	if(a[size]==m) return true;//flag=true;
+	else if(size==0) return false;//{flag=false;return;}
+	else{
+		if(sum(a,size-1,m-a[size]))
+			return true;
+		if(sum(a,size-1,m))
+			return true;
+	}
+	return false;	
+}
+int fi(int n)
+{
+	if(n==0||n==1)return n;
+	return fi(n-2)+fi(n-1);
+}
+int reverse(int n)
+{
+//	int d,result=0;//321  123
+//	while(n>0){
+//	result=result*10+n%10;
+//	n/=10;
+//	}
+//	return result;
+	if(n/10==0) return n;
+	int d=n%10,temp=n;
+	while(temp>0)
+		d*=10;
+	 return d+reverse(n/10);
+}
+int Reverse(int n, int sum = 0) {
+    return n==0? sum:Revert(n/10,sum*10+n%10);
+}
+
+void conversion(int n,int k)
+{
+	char s[]="0123456789ABCDEF";  //char s[]    char s[16] is false
+	bool flag;
+	if(n<0){n=-n;flag=false; cout<<"-";}
+	if(n>0){
+	conversion(n/k,k);
+	cout<<s[n%k];	
+		n/=k;
+	}
+}
+string convert(int n,int k)
+{
+	string s="",table="0123456789ABCDEF";
+	bool flag=true;
+	if(n<0){n=-n;flag=false;}
+	while(n>0){
+		s=table[n%k]+s;
+		n/=k;
+	}
+	if(!flag) 
+		s="-"+s;
+	return s;
+}
+	
+ double fx(double n,double x)
+ {
+ 	if(n==1) return sqrt(1+x);
+ 	else return sqrt(n+fx(n-1,x));     //what data type?
+ }
+void merge(int a[],int s,int e)
+{
+	int i=s,mid=s+(e-s)/2,j=mid+1,index=0;
+	int* temp=new int[e-s+1];
+	while(i<=mid&&j<=e)
+		if(a[i]<a[j])
+			temp[index++]=a[i++];
+		else
+			temp[index++]=a[j++];
+	while(i<=mid)
+		temp[index++]=a[i++];
+	while(j<=e)
+		temp[index++]=a[j++];
+	for(int i=0;i<e-s+1;i++)
+		a[i+s]=temp[i];
+	delete[] temp;
+}
+void mergesort(int a[],int s,int e)
+{
+	if(s==e) return;
+	int mid=s+(e-s)/2;
+	mergesort(a,s,mid);
+	mergesort(a,mid+1,e);
+	merge(a,s,e);
+}
+bool isPal(const string &str, int start, int end)
+{
+	if(start==end) return true;
+	if(str[start]!=str[end])
+		return false;
+	if(isPal(str,start+1,end-1))
+		return true;
+	else
+		return false;
+}
+int frequencyCount(unsigned int n, unsigned int digit)
+{
+	if(n==0) return 0;
+	int count=0;
+	if(n%10==digit)
+		count++;
+	return count+frequencyCount(n/10,digit);
+}
+//	int count=0;
+//	while(n>0){
+//		if(n%10==digit)
+//			count++;
+//		n/=10;
+//	}
+//	return count;
+void reverse(int* arr, int start, int end)
+{
+	if(start>=end) return;
+	swap(arr[start],arr[end]);
+	reverse(arr,start+1,end-1);	
+}	
+int sum_of_digits(unsigned int n)
+{
+	if(n==0) return 0;
+	int sum=n%10;
+	return sum+sum_of_digits(n/10);
+}
+void shift(int a[],int size,int m)
+{
+	if(m==0) return;
+	int temp=a[size-1];
+	for(int i=size-2;i>=0;i--)
+		a[i+1]=a[i];
+	a[0]=temp;
+	shift(a,size,m-1);
+	      
+}
+int stringToInt(char str[], int size)
+{
+//	bool flag=true;
+//	int result=0,index=0;
+//	if(str[0]=='-') {flag=false; index++;}
+//	while(str[index]!='\0'){
+//		result=(str[index]-'0')+result*10;
+//		index++;
+//	}
+//	if(flag==false) result*=-1;
+//	return result;
+	if(size==0) return 0;
+	while(size>0)
+		return str[size-1]-'0'+ 10*stringToInt(str,size-1);
+}
+
+	
+	
+	
+	
+	
+
+int main()
+{
+	
+	int a[]={2,2,3,5,9,1,4,8};
+	//cout<<flag;
+    //conversion(-256,16);
+   // cout<<digit(143142,4);
+   //cout<< fx(2.5,15);
+//	mergesort(a,0,7);
+//	for(int i=0;i<8;i++)
+//		cout<<a[i]<<" ";
+//	string s="aaabbbaaa";
+//	cout<<isPal(s,0,8);
+//	cout<<frequencyCount(3363623,3);
+   	//char s[]="123456789"; 
+    //cout<<stringToInt(s,9);
+	cout<<reverse(1234);
+
+	system("Pause");
+	return 0;
+
+}
