@@ -1,0 +1,72 @@
+#include<iostream>
+using namespace std;
+
+class Weapon{
+	int strength;
+	char type;
+	int modified;
+public:
+	void setPower(const int& s){strength=s;}
+	int return_strength() {return strength;}
+	char return_type() {return type;}
+
+};
+class Rock:public Weapon{
+public:
+	bool battle(Weapon w)
+	{
+		if(w.return_type()=='p'){
+			 if(return_strength()/2>w.return_strength()*2)
+				 return true;
+			 else 
+				 return false;
+		}
+		else if(w.return_type()=='s')
+			 return 2*return_strength()>w.return_strength()/2;
+	}
+};
+class Paper:public Weapon{
+public:
+	bool battle(Weapon w)
+	{
+		if(w.return_type()=='s')
+			return this->return_strength()/2>w.return_strength()*2;
+		if(w.return_type()=='r')
+			 return 2*return_strength()>w.return_strength()/2;
+	}
+};
+class Scissors:public Weapon{
+public:
+	bool battle(Weapon w)
+	{
+		if(w.return_type()=='p')
+			return return_strength()*2>w.return_strength()/2;
+		if(w.return_type()=='r')
+			 return return_strength()/2>w.return_strength()*2;
+	}
+};
+
+void test()
+{
+	int a,b,c;
+	//cin>>a>>b>>c;
+	Rock r;Paper p;Scissors s;
+	r.setPower(88);p.setPower(7);s.setPower(24);
+	cout<<r.battle(p);
+	/*if(r.return_strength()/2>p.return_strength()*2)
+		cout<<11111;
+	else
+		cout<<2222222222;*/
+
+}
+
+int main()
+{
+
+	system("Pause");
+	return 0;
+}
+struct rational {
+int numerator;
+int denominator;
+} ;
