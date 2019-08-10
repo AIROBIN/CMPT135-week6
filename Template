@@ -1,0 +1,78 @@
+template<class T>
+class SmartArray{
+T *A;
+int size;
+public:
+  SmartArray(){A=NULL;size=0;}
+  SmartArray(const T *A,const int& size){
+    this->size=size;
+    for(int i=0;i<size;i++)
+      this->A[i]=A[i];
+    }
+  SmartArray(const SmartArray<T>& L){
+    this->size=L.size;
+    for(int i=0;i<size;i++)
+      A[i]=L.A[i];
+     }
+   SmartArray<T>& operator=(const SmartArray<T>& L){
+    if(this==&L) return *this;
+    if(A!=NULL) delete[] A;
+    size=L.size;
+    for(int i=0;i<size;i++)
+      A[i]=L.A[i];
+    return *this;
+    }
+    ~SmartArray();
+    int getsize()const {return size;}
+    T& operator[](const int& index)const {
+      if(index>=0&&index<size)
+        return A[i];
+       }
+    int findIndex(const T& e)const{
+      for(int i=0;i<size;i++)
+        if(A[i]==e)
+          return i;
+      return -1;
+     }
+     void append(const T& e){
+      T* temp=new T[size+1];
+      for(int i=0;i<size;i++)
+        temp[i]=A[i];
+      temp[size]=e;
+      if(A!=NULL) delete[] A;
+      A=temp;
+      size++;
+      }
+      bool remove(const T&e){
+        int count=0;
+        for(int i=0;i<size;i++)
+          if(A[i]==e)
+             count++;
+        if(count==0) return false;
+        T* temp=new T[size-count];
+        int k=0;
+        for(int i=0;i<size-count;i++)
+          if(A[i]!=e){
+            temp[k]=A[i];k++;
+            }
+        delete[] A;
+        A=temp;
+        size=size-count;
+        return true;
+       }
+       SmartArray<T> operator-(const SmartArray<T>& L){
+         SmartArray a=*this;
+         for(int i=0;i<L.getsize();i++)
+            a.remove(L.A[i]);
+         return a;
+        }
+       template<class T>
+       friend SmartArray& operator<<(ostream& out,const SmartArray<T>& L){
+          for(int i=0;i<L.getsize();i++)
+              out<<L.A[i]<<" ";
+           return out;
+        }
+         
+      
+      
+      
