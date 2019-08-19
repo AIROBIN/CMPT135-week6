@@ -11,6 +11,7 @@ int(x+0.5)
 
 int int(double x)     int(-2.3)=-2
 double floor(double x)  floor(-2.3)=-3
+double fabs(double x)
 
 double x,y;
 if(x-y>1e-6) cout<<"x>y";
@@ -21,6 +22,8 @@ if(x<=1e-6) cout<<"x==0";
 //会有很微小的误差，所以判断是否为0，就看它的绝对值是不是<=EPS
 
 //  (int)(x*0.3/500)  =   x/10*3/500
+
+
 
 
 if(y%x==0) cout<<n-y/x;
