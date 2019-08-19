@@ -47,17 +47,52 @@ if(root*root*root==x&&x%2==1&&x/100>0&&x/100<10&&x%1==0)
 if(x/100>0&&x/100<10&&x%1==0)
    if(pow(x%10,3.0)+pow(x/10%10,3.0)+pow(x/100,3.0)==x)
    	cout<<" shuixianhua";
-int x,total,n;
-  total=n/7*5*250;
-  if(n%7+x<=5)
-     total+=n%7 *250;
-  else if(n%7+x==6)
-      total+=(n%7-1)*250;
-  else if(n%7+x>=7)
-      total+=(n%7-2)*250;
-  cout<<total;
-  
-  
+
+
+#include<algorithm>
+min(3,5)=3;
+max(3,5)=5;
+a=min(b,c);  same data type
+
+O(1)            <=long long
+O(log n)        <=long long
+O(n)             5*10^7
+O(n log n)      10^6
+O(n sqrt(n))   2*10^5
+O(n log^2 (n))  10^5
+O(n^2)          10^4
+O(n^3)        400-500
+O(n!)         11（在NOI现场上，你甚至可以跑10万）
+
+常见算法的复杂度（不要求掌握，仅作了解）
+
+辗转相除法：O(log n)
+素数判定：O(sqrt n)
+选择排序、插入排序、冒泡排序：O(n^2)
+快速排序、堆排序、归并排序：O(nlogn)
+
+m边数 n点数
+Kruskal：O(m log m)
+Prim：O(n^2)
+Tarjan lca：O(n log n)
+Tarjan 割点：O(n+m)
+Dijkstra:O((n+m) log n)
+Bellman-ford:O(nm)
+SPFA:O(nm)
+Dinic:O(n^2m)
+EK:O(nm^2)（最大流）
+
+m操作次数 n序列长度
+树状数组：O(m log n)
+线段树：O(m log n)
+平衡树：O(m log n)
+并查集：O(m log n)
+分块：O(m sqrt n)
+莫队：O(n sqrt n) 带修改：O(n^5/3)
+
+
+   
+
 
    
    
