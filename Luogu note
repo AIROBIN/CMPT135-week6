@@ -1,0 +1,62 @@
+Data tpye           memory space       range
+char               1 byte/8 bits    [-128,127]
+int                4 bytes/32 bits  [-2^31,2^31-1]
+unsigned int       4 bytes/ 32 bits [0,2^32]
+long long          8 bytes/64 bits  [-2^63,2^63-1]  9*10^18
+unsigned long long 8 bytes/64 bits  [0,2^64]
+double             4 bytes/64 bits   logn |x|<=308 (15 Significant figures)
+
+round off
+int(x+0.5)
+
+int int(double x)     int(-2.3)=-2
+double floor(double x)  floor(-2.3)=-3
+
+double x,y;
+if(x-y>1e-6) cout<<"x>y";
+else cout<<"x<y";
+
+if(x<=1e-6) cout<<"x==0";  
+//EPS是个很小的数，如1e-6，因为浮点数在内存中的表示是不精确的，
+//会有很微小的误差，所以判断是否为0，就看它的绝对值是不是<=EPS
+
+//  (int)(x*0.3/500)  =   x/10*3/500
+
+
+if(y%x==0) cout<<n-y/x;
+else  cout<<n-y/x-1;
+
+1234
+x%10
+x/10%10
+x/100%10
+
+x/1000>0&&x/1000<10
+x%1==0
+
+int root=(int)sqrt(x*1.0);
+if(root*root==x) cout<<"square number";
+else cout<<"no";
+
+int root=pow(x,1.0/3);
+if(root*root*root==x&&x%2==1&&x/100>0&&x/100<10&&x%1==0)
+	cout<<" it is a odd number";
+if(x/100>0&&x/100<10&&x%1==0)
+   if(pow(x%10,3.0)+pow(x/10%10,3.0)+pow(x/100,3.0)==x)
+   	cout<<" shuixianhua";
+int x,total,n;
+  total=n/7*5*250;
+  if(n%7+x<=5)
+     total+=n%7 *250;
+  else if(n%7+x==6)
+      total+=(n%7-1)*250;
+  else if(n%7+x>=7)
+      total+=(n%7-2)*250;
+  cout<<total;
+  
+  
+
+   
+   
+   
+
