@@ -90,11 +90,52 @@ m操作次数 n序列长度
 分块：O(m sqrt n)
 莫队：O(n sqrt n) 带修改：O(n^5/3)
 
+<cmath>
+ //all are real numbers
+cout<<sin(1.0*30/360*2*3.141592653)<<endl;
+cout<(int)ceil(4.5)<<endl;
+cout<(int)floor(4.5)<<endl;
+cout<(int)round(4.5)<<endl;   
+cout<(int)sqrt(1.44)<<endl;
+cout<(int)pow(2,3.0)<<endl;
+cout<(int)ceil(x,1.0/y)<<endl;
 
-   
+<algorithm>
+cout<min(1,2)<<endl;
+cout<max(1,2)<<endl;
+int a=1,b=2;
+swap(a,b);
 
+int n,z[1000];
+int main()
+{
+  cin>>n;
+  for(int i=1;i<=n;i++)
+     cin>>z[i];
+  sort(z+1,z+n+1);//O(nlogn)
+  reverse(z+1,z+n+1);
+  for(int i=1;i<=n;i++)
+     cout<<z[i]<<" ";
+  return 0;
+ }
+ 
+ 
+ 3*10^8 /s
 
-   
-   
-   
+<cstdio>
+int a,b;
+scanf("%d%d",&a,&b);
+printf("%d %d\n",a+b,a-b);
 
+double c;
+scanf(%lf,&c);
+printf("abc%.6lf\n",&c);
+
+char s[100];
+scanf("%s",s+1);
+
+long long l;
+scanf("%lld",&l);
+printf("%lld",l);
+
+10^6duqu   0.5s  1s
