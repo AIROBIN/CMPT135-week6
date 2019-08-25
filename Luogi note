@@ -1,0 +1,149 @@
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstring>
+using namespace std;
+
+#define Pi 3.1415926//cout后 小数仍然保留六位有效数字
+
+
+void Chapter1()
+{
+	cout<<5000000.0/3<<endl;
+	cout<<0.000005/3<<endl;
+	cout<<5e6<<endl;
+	cout<<5e6/3<<endl;
+	cout<<5e-6<<endl;
+	cout<<fabs(3.1364-42.43)<<endl;//for real number
+	
+	/* double sin(double x);
+	 double cos(double x);
+	 double exp(double x);
+	 double log(double x);
+	 double pow(double x);
+	 double sqrt(double x);
+	 double fabs(double x);
+	 double ceil(double x);
+	 double floor(double x);*/
+	
+	cout<<pow(27,1.0/3)<<endl;
+	
+	double r=2;
+	const double PI=3.1415926;
+	double V=4.0/3*Pi*pow(r,3.0);
+
+	 int : [-2^31,2^31-1]=[-2147483648,2147483647] = [-2*10^9,2*10^9]
+	 int = 4 bytes = 32 bits  0 or 1  -> 2^32
+	 long long : [-2^63,2^63-1] = [-9*10^18,9*10^18]
+
+	 variable priority: double long long int char bool 
+
+	int a=2147483647,b=1;
+	cout<< (long long)a+b <<endl;
+	cout<< 1ll*a+b << endl;
+	cout<< 0ll+a+b << endl;
+	cout<< 1.0*a <<endl;
+	cout<< 0.0+a <<endl;
+
+}
+
+void practice()
+{
+	a=3.0/3/3*9*9;
+	(x+y)*2=24 x=y+4   y=(24.0/2-4)/2 
+	x+y=480  x=y*1.4  y=480/2.4  
+	3*x+11=y  4*x-1=y
+	80*(t+12)=120*t
+	10*20*x=15*10*x=a*5*x
+	10000*pow(1.035,5)  10000+10000*0.05*5
+
+	sqrt(3*pow(a,3.0));
+	 1.0*(c+1)/(a+b)
+	
+}
+int n;//default 0
+int y[10],z[10]; // default all 0  定义数组必须开全局变量
+char s[6]="abcde";
+char s[100];
+int main()
+{
+	Chapter1();
+	practice();
+	
+	int x[10000000]; 局部变量开太大要爆
+	
+	Data storage method
+	for(int i=0;i<10;i++)
+		cin>> z[i];
+	cin>>s;   //读入时会在空字符终止
+	cout<<s;  
+	
+	cin>>s+1;    //从1下标开始存
+	cout<<s+1;
+	for(int i=0;i<=4;i++)
+		cout<<i<<" "<<s[i]<<endl;
+	cout<<strlen(s+1);
+	
+	strcmp(s1,s2); 字典序  -1 s1<s2 0 s1==s2 1 s1>s2
+	cout<<(int)'A'<<endl;
+	cout<<(int)'a'<<endl;
+	
+	memset(z,0,sizeof(z));   call cstring library
+	memset(z,-1,sizeof(z));
+	memset(z,0x3f,sizeof(z));
+	cout<< z[0] <<endl;; //1061109567 
+	int min = 0x3f3f3f3f;  //16进制下  int 无穷大  
+	cout<< min <<endl;
+	
+	system("Pause");
+	return 0;
+
+}		
+<cmath>
+ //all are real numbers
+cout<<sin(1.0*30/360*2*3.141592653)<<endl;
+cout<(int)ceil(4.5)<<endl;
+cout<(int)floor(4.5)<<endl;
+cout<(int)round(4.5)<<endl;   
+cout<(int)sqrt(1.44)<<endl;
+cout<(int)pow(2,3.0)<<endl;
+cout<(int)ceil(x,1.0/y)<<endl;
+
+<algorithm>
+cout<min(1,2)<<endl;
+cout<max(1,2)<<endl;
+int a=1,b=2;
+swap(a,b);
+
+int n,z[1000];
+int main()
+{
+  cin>>n;
+  for(int i=1;i<=n;i++)
+     cin>>z[i];
+  sort(z+1,z+n+1);//O(nlogn)
+  reverse(z+1,z+n+1);
+  for(int i=1;i<=n;i++)
+     cout<<z[i]<<" ";
+  return 0;
+ }
+ 
+ 3*10^8 /s
+
+<cstdio>
+int a,b;
+scanf("%d%d",&a,&b);
+printf("%d %d\n",a+b,a-b);
+
+double c;
+scanf(%lf,&c);
+printf("abc%.6lf\n",&c);
+
+char s[100];
+scanf("%s",s+1);
+
+long long l;
+scanf("%lld",&l);
+printf("%lld",l);
+
+10^6duqu   0.5s  1s
