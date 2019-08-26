@@ -215,28 +215,29 @@ void one_two_three(int x)
 			cout<<x<<" "<<2*x<<" "<<3*x<<endl;
 	}
 }
-
-int xpower(int x,int n)
+void conversion(int n,int k)
 {
-	if(n==0) return 1;
-	else return x*xpower(x,n-1);
-}
-int factorial(int n)
-{
-	return n==0?1: n*factorial(n-1);
-}
-int gcd(int a,int b)
-{
-	return b==0?a:gcd(b,a%b);
-}
-bool sum(int a[],int size,int m)
-{
-	if(a[size-1]==m) return true;
-	else if(size==0) return false;
-	else{
-		sum(a,size-1-1,m-a[size-1]);
-		sum(a,size-1-1,m);
+	char s[]="0123456789ABCDEF";  //char s[]    char s[16] is false
+	bool flag;
+	if(n<0){n=-n;flag=false; cout<<"-";}
+	if(n>0){
+	conversion(n/k,k);
+	cout<<s[n%k];	
+		n/=k;
 	}
+}
+string convert(int n,int k)
+{
+	string s="",table="0123456789ABCDEF";
+	bool flag=true;
+	if(n<0){n=-n;flag=false;}
+	while(n>0){
+		s=table[n%k]+s;
+		n/=k;
+	}
+	if(!flag) 
+		s="-"+s;
+	return s;
 }
 
 //
