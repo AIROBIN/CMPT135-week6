@@ -65,29 +65,27 @@ O(n^3)        400-500
 O(n!)         11（在NOI现场上，你甚至可以跑10万）
 
 常见算法的复杂度（不要求掌握，仅作了解）
-
 辗转相除法：O(log n)
 素数判定：O(sqrt n)
 选择排序、插入排序、冒泡排序：O(n^2)
 快速排序、堆排序、归并排序：O(nlogn)
-
-m边数 n点数
-Kruskal：O(m log m)
-Prim：O(n^2)
-Tarjan lca：O(n log n)
-Tarjan 割点：O(n+m)
-Dijkstra:O((n+m) log n)
-Bellman-ford:O(nm)
+m边数 n点数                        m操作次数 n序列长度
+Kruskal：O(m log m)               树状数组：O(m log n)
+Prim：O(n^2)                      线段树：O(m log n)
+Tarjan lca：O(n log n)            平衡树：O(m log n)
+Tarjan 割点：O(n+m)               并查集：O(m log n)
+Dijkstra:O((n+m) log n)           分块：O(m sqrt n)
+Bellman-ford:O(nm)                莫队：O(n sqrt n) 带修改：O(n^5/3)
 SPFA:O(nm)
 Dinic:O(n^2m)
 EK:O(nm^2)（最大流）
 
-m操作次数 n序列长度
-树状数组：O(m log n)
-线段树：O(m log n)
-平衡树：O(m log n)
-并查集：O(m log n)
-分块：O(m sqrt n)
-莫队：O(n sqrt n) 带修改：O(n^5/3)
+
+判断一个数是不是2的整数次幂
+x&(x-1)==0
+
+
+
+
 
 
