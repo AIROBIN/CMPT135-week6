@@ -80,12 +80,24 @@ SPFA:O(nm)
 Dinic:O(n^2m)
 EK:O(nm^2)（最大流）
 
-
+x&1  <->  x%2==1
 判断一个数是不是2的整数次幂
 x&(x-1)==0
 
 
+不定方程
+3x+y/5=100
+for(int x=0;x<=100/3;x++)  
+{
+   y=(100-3*x)*5;
+   if(x+y==100&y%5==0)
+      cout<<x<<","<<y<<endl;
+}
 
+<ctime>
+cout<<(double)CLOCK()/CLOCKS_PER_SEC;
 
+末6位  对10^6取模
+const int mod=1000000;
 
 
