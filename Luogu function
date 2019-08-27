@@ -239,7 +239,59 @@ string convert(int n,int k)
 		s="-"+s;
 	return s;
 }
-
+//ax+by=c  解不定方程
+void q11_77()
+{
+	int a,b,c,x,y;
+	cin>>a>>b>>c;
+	for(x=0;x<=c/a;x++)
+	{
+		y=(c-a*x)/b;
+		if(a*x+b*y==c&&(c-a*x)%b==0)
+			cout<<x<<" "<<y<<endl;
+	}
+}
+//约瑟夫问题
+void Josephu()
+{
+	bool a[101];
+	memset(a,1,sizeof(a));
+	int n,m;
+	cin>>n>>m;
+	const int maxi=n;
+	for(int count=1,index=1;;count++,index++)
+	{
+		if(index==maxi+1) index=1;
+		while(a[index]==0){
+			index++;
+			if(index==maxi+1) index=1;
+		}
+		if(count==m&&a[index]==1){
+			n--;
+			a[index]=0;
+			count=0;
+			cout<<index<<" ";
+		}
+		if(n==0) break;
+	}
+}
+//筛法求素数
+void prime()
+{
+	const int n=101;
+	int a[n];
+	memset(a,1,sizeof(a));
+	a[0]=a[1]=0;
+	for(int i=2;i<=sqrt(n*1.0);i++)
+	{
+		if(a[i])
+			for(int j=2;i*j<=n;j++)
+				a[i*j]=false;
+	}
+	for(int i=2;i<=n;i++)
+		if(a[i])
+			cout<<i<<" ";
+}
 //
 //int main()
 //{
