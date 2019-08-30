@@ -275,7 +275,7 @@ void Josephu()
 		if(n==0) break;
 	}
 }
-//筛法求素数
+//筛法求素数 1-100
 void prime()
 {
 	const int n=101;
@@ -283,14 +283,19 @@ void prime()
 	memset(a,1,sizeof(a));
 	a[0]=a[1]=0;
 	for(int i=2;i<=sqrt(n*1.0);i++)
-	{
-		if(a[i])
-			for(int j=2;i*j<=n;j++)
-				a[i*j]=false;
-	}
-	for(int i=2;i<=n;i++)
-		if(a[i])
-			cout<<i<<" ";
+	    if(a[i])
+		for(int j=2;i*j<n;j++)
+			a[i*j]=false;
+	for(int i=2;i<n;i++)
+	   if(a[i])
+		cout<<i<<" ";
+}
+bool sum(int a[],int n,int m)
+{//a中是否有任意几个元素之和等于m
+	if(n==0||a[n]==m)
+		return true;
+	 if(sum(a,n-1,m)||sum(a,n-1,m-a[n]))//不取a[n]和取a[n]
+		 return true;
 }
 //
 //int main()
