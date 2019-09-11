@@ -23,32 +23,6 @@ if(x<=1e-6) cout<<"x==0";
 
 //  (int)(x*0.3/500)  =   x/10*3/500
 
-
-
-
-if(y%x==0) cout<<n-y/x;
-else  cout<<n-y/x-1;
-
-1234
-x%10
-x/10%10
-x/100%10
-
-x/1000>0&&x/1000<10
-x%1==0
-
-int root=(int)sqrt(x*1.0);
-if(root*root==x) cout<<"square number";
-else cout<<"no";
-
-int root=pow(x,1.0/3);
-if(root*root*root==x&&x%2==1&&x/100>0&&x/100<10&&x%1==0)
-	cout<<" it is a odd number";
-if(x/100>0&&x/100<10&&x%1==0)
-   if(pow(x%10,3.0)+pow(x/10%10,3.0)+pow(x/100,3.0)==x)
-   	cout<<" shuixianhua";
-
-
 #include<algorithm>
 min(3,5)=3;
 max(3,5)=5;
