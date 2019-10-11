@@ -146,4 +146,4 @@ long long l;
 scanf("%lld",&l);
 printf("%lld",l);
 
-10^6duqu   0.5s  1s
+计算内存的方法：数组大小*类型长度/1000 / 1000=所占内存 MB 数，int 类型长度是 4, long long=8。
