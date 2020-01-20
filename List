@@ -1,0 +1,76 @@
+#include<iostream>
+using namespace std;
+
+
+class ArrayClass
+{
+    int* arr;
+    int arrSize;
+    int n;
+    public:
+        ArrayClass(){arrSize=2;arr=new int[arrSize];n=0;}
+        ~ArrayClass(){delete[] arr;}
+        void insert(int value)
+        {
+            if(n==arrSize)
+            {
+                arrSize*=2;
+                int* temp=new int[arrSize];
+                for(int i=0;i<n;i++)
+                    temp[i]=arr[i];
+                arr=new int[arrSize];
+                for(int i=0;i<n;i++)
+                    arr[i]=temp[i];
+                delete[] temp;
+            }
+            arr[n]=value;
+            n++;
+        }
+}
+
+
+void arrayClassTest();
+
+ 
+
+// Main function that is called when the program is executed
+
+int main(){
+
+arrayClassTest();
+
+ 
+
+return 0;
+
+}
+
+ 
+
+void arrayClassTest(){
+
+ArrayClass ac;
+
+ac.insert(1);
+
+ac.insert(2);
+
+ 
+
+cout << "ac.size() = "<< ac.size() << endl;
+
+ 
+
+// Insert the values 1 to 7 in ac1
+
+for(int i=3; i <= 40; ++i){
+
+ac.insert(i);
+
+}
+
+ 
+
+cout << "ac.size() = "<< ac.size() << endl;
+
+}
