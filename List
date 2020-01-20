@@ -68,4 +68,107 @@ void ArrayClass::insert(int value)
 int ArrayClass::size() { return n; }
 
 
+#include<iostream>
+#include<string>
+class StringSet {
+	string* s;
+	int curSize;
+	int maxSize;
+public:
+	StringSet() { maxSize = 2; s = new string[maxSize]; curSize = 0; }
+	StringSet(const StringSet& str)
+	{
+		maxSize = str.maxSize;
+		curSize = str.curSize;
+		s = new string[maxSize];
+		for (int i = 0; i < curSize; i++)
+			s[i] = str.s[i];
+	}
+	~StringSet() { delete[] s; }
+	StringSet& operator=(const StringSet& str)
+	{
+		if (this == &str)
+			return *this;
+		if (s != NULL)
+			delete[] s;
+		maxSize = str.maxSize;
+		curSize = str.curSize;
+		s = new string[maxSize];
+		for (int i = 0; i < curSize; i++)
+			s[i] = str.s[i];
+		return *this;
+	}
+	bool insert(string str)
+	{
+		for (int i = 0; i < curSize; i++)
+			if (s[i] == str)
+				return false;
+		if (curSize == maxSize)
+		{
+			//Store data
+			string* temp = new string[maxSize];
+			for (int i = 0; i < curSize; i++)
+				temp[i]=s[i];
+			//Expand capacity
+			maxSize *= 2;
+			delete s;
+			//Reallocate memory
+			s = new string[maxSize];
+			//Restore previous content
+			s = temp;
+		}
+		s[curSize] = str;
+		curSize++;
+		return true;
+	}
+	bool remove(string str)
+	{
+		int n = find(str);
+		if (n == -1)
+			return false;
+		for (int i = n; i+1 < curSize; i++)
+			s[i] = s[i + 1];
+		return true;
+	}
+	int find(string str)const
+	{
+		for (int i = 0; i < curSize; i++)
+			if (s[i] == str)
+				return i;
+		return -1;
+	}
+	int size() const
+	{
+		return curSize;
+	}
+	StringSet unions(const StringSet & str) const
+	{
+		StringSet ans;
+		for (int i = 0; i < curSize; i++)
+		{
+			ans.insert(this->s[i]);
+			ans.insert(str.s[i]);
+		}
+		if (ans.s == NULL)
+			ans.curSize = 0;
+		return ans;
+	}
+	StringSet intersection(const StringSet & str) const
+	{
+		StringSet ans;
+		for (int i = 0; i < curSize; i++)
+			if (find(s[i]) > -1 && str.find(s[i]) > -1)
+				ans.insert(s[i]);
+		return ans;
+	}
+	StringSet difference(const StringSet &str) const
+	{
+		StringSet ans(*this);
+		for (int i = 0; i < str.curSize; i++)
+			ans.remove(str.s[i]);
+		return ans;
+	}
+
+};
+
 
