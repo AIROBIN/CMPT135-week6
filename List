@@ -57,6 +57,7 @@ void ArrayClass::insert(int value)
 		int* temp = new int[arrSize];
 		for (int i = 0; i < n; i++)
 			temp[i] = arr[i];
+		delete[] arr;
 		arr = new int[arrSize];
 		for (int i = 0; i < n; i++)
 			arr[i] = temp[i];
@@ -68,107 +69,177 @@ void ArrayClass::insert(int value)
 int ArrayClass::size() { return n; }
 
 
-#include<iostream>
+#pragma once
 #include<string>
+#include <iostream>
+using namespace std;
+
 class StringSet {
 	string* s;
 	int curSize;
 	int maxSize;
 public:
-	StringSet() { maxSize = 2; s = new string[maxSize]; curSize = 0; }
-	StringSet(const StringSet& str)
-	{
-		maxSize = str.maxSize;
-		curSize = str.curSize;
-		s = new string[maxSize];
-		for (int i = 0; i < curSize; i++)
-			s[i] = str.s[i];
-	}
-	~StringSet() { delete[] s; }
-	StringSet& operator=(const StringSet& str)
-	{
-		if (this == &str)
-			return *this;
-		if (s != NULL)
-			delete[] s;
-		maxSize = str.maxSize;
-		curSize = str.curSize;
-		s = new string[maxSize];
-		for (int i = 0; i < curSize; i++)
-			s[i] = str.s[i];
-		return *this;
-	}
-	bool insert(string str)
-	{
-		for (int i = 0; i < curSize; i++)
-			if (s[i] == str)
-				return false;
-		if (curSize == maxSize)
-		{
-			//Store data
-			string* temp = new string[maxSize];
-			for (int i = 0; i < curSize; i++)
-				temp[i]=s[i];
-			//Expand capacity
-			maxSize *= 2;
-			delete s;
-			//Reallocate memory
-			s = new string[maxSize];
-			//Restore previous content
-			s = temp;
-		}
-		s[curSize] = str;
-		curSize++;
-		return true;
-	}
-	bool remove(string str)
-	{
-		int n = find(str);
-		if (n == -1)
-			return false;
-		for (int i = n; i+1 < curSize; i++)
-			s[i] = s[i + 1];
-		return true;
-	}
-	int find(string str)const
-	{
-		for (int i = 0; i < curSize; i++)
-			if (s[i] == str)
-				return i;
-		return -1;
-	}
-	int size() const
-	{
-		return curSize;
-	}
-	StringSet unions(const StringSet & str) const
-	{
-		StringSet ans;
-		for (int i = 0; i < curSize; i++)
-		{
-			ans.insert(this->s[i]);
-			ans.insert(str.s[i]);
-		}
-		if (ans.s == NULL)
-			ans.curSize = 0;
-		return ans;
-	}
-	StringSet intersection(const StringSet & str) const
-	{
-		StringSet ans;
-		for (int i = 0; i < curSize; i++)
-			if (find(s[i]) > -1 && str.find(s[i]) > -1)
-				ans.insert(s[i]);
-		return ans;
-	}
-	StringSet difference(const StringSet &str) const
-	{
-		StringSet ans(*this);
-		for (int i = 0; i < str.curSize; i++)
-			ans.remove(str.s[i]);
-		return ans;
-	}
-
+	StringSet();
+	StringSet(const StringSet&);
+	~StringSet();
+	StringSet& operator=(const StringSet&);
+	bool insert(string);
+	bool remove(string);
+	int find(string)const;
+	int size() const;
+	StringSet unions(const StringSet&) const;
+	StringSet intersection(const StringSet&) const;
+	StringSet difference(const StringSet&) const;
+	void print();
 };
+
+
+#include "StringSet.h"
+#include<string>
+using namespace std;
+
+StringSet::StringSet()
+{	
+	maxSize = 2; 
+	s = new string[maxSize]; 
+	curSize = 0; 
+}
+
+StringSet::StringSet(const StringSet& set)
+{
+	maxSize = set.maxSize;
+	curSize = set.curSize;
+	s = new string[maxSize];
+	for (int i = 0; i < curSize; i++)
+		s[i] = set.s[i];
+}
+StringSet::~StringSet() 
+{ 
+	delete[] s; 
+}
+StringSet& StringSet::operator=(const StringSet& set)
+{
+	if (this == &set)
+		return *this;
+	if (s != NULL)
+		delete[] s;
+	maxSize = set.maxSize;
+	curSize = set.curSize;
+	s = new string[maxSize];
+	for (int i = 0; i < curSize; i++)
+		s[i] = set.s[i];
+	return *this;
+}
+bool StringSet::insert(string str)
+{
+	for (int i = 0; i < curSize; i++)
+		if (s[i] == str)
+			return false;
+	if (curSize == maxSize)
+	{
+		//Store data
+		string* temp = new string[maxSize];
+		for (int i = 0; i < curSize; i++)
+			temp[i] = s[i];
+		//Expand capacity
+		maxSize *= 2;
+		delete[] s;
+		//Reallocate memory
+		s = new string[maxSize];
+		//Restore previous content
+		for (int i = 0; i < curSize; i++)
+			s[i] = temp[i];
+		delete[] temp;
+	}
+	s[curSize] = str;
+	curSize++;
+	return true;
+}
+bool StringSet::remove(string str)
+{
+	int n = find(str);
+	if (n == -1)
+		return false;
+	for (int i = n; i + 1 < curSize; i++)
+		s[i] = s[i + 1];
+	return true;
+}
+int StringSet::find(string str)const
+{
+	for (int i = 0; i < curSize; i++)
+		if (s[i] == str)
+			return i;
+	return -1;
+}
+int StringSet::size() const
+{
+	return curSize;
+}
+StringSet StringSet::unions(const StringSet& set) const
+{
+	StringSet ans;
+	for (int i = 0; i < curSize; i++)
+	{
+		ans.insert(this->s[i]);
+		ans.insert(set.s[i]);
+	}
+	if (ans.s == NULL)
+		ans.curSize = 0;
+	return ans;
+}
+StringSet StringSet::intersection(const StringSet& str) const
+{
+	StringSet ans;
+	for (int i = 0; i < curSize; i++)
+		if (find(s[i]) > -1 && str.find(s[i]) > -1)
+			ans.insert(s[i]);
+	return ans;
+}
+StringSet StringSet::difference(const StringSet& str) const
+{
+	StringSet ans(*this);
+	for (int i = 0; i < str.curSize; i++)
+		ans.remove(str.s[i]);
+	return ans;
+}
+
+void StringSet::print()
+{
+	for (int i = 0; i < curSize; i++)
+		cout << s[i];
+	cout << endl;
+}
+
+
+
+#include<iostream>
+#include<string>
+#include"StringSet.h"
+using namespace std;
+
+
+void test()
+{
+	StringSet set;
+	set.insert("hello");
+	set.insert("world");
+	cout << set.size() << endl;
+	set.insert("WOW");
+	for (int i = 0; i < set.size(); i++)
+		cout << set.size() << endl;
+	
+	/*StringSet set2(set);
+	set2.print();*/
+
+
+}
+
+
+int main()
+{
+	test();
+	system("Pause");
+	return 0;
+}
 
 
