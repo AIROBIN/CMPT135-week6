@@ -225,16 +225,24 @@ using namespace std;
 
 void test()
 {
-	StringSet set;
-	set.insert("hello");
-	set.insert("world");
-	cout << set.size() << endl;
-	set.insert("WOW");
-	for (int i = 0; i < set.size(); i++)
-		cout << set.size() << endl;
+	StringSet sset1;
+	sset1.insert("cat");
+	sset1.insert("bat");
+	sset1.insert("rat");
+	sset1.insert("badger");
+	StringSet sset2;
+	sset2.insert("elephant");
+	sset2.insert("bat");
+	sset2.insert("hamster");
+	 //Use the copy constructor to build a StringSet with sset1 – sset2
+	StringSet sset3(sset1.difference(sset2));
+	sset3.print();
+	// Use the overloaded assignment operator to make a StringSet
+	// contain sset2 – sset1
+	StringSet sset4 = sset2.difference(sset1);
+	sset4.print();
 	
-	StringSet set2(set);
-	set2.print();
+	
 }
 
 
@@ -244,5 +252,4 @@ int main()
 	system("Pause");
 	return 0;
 }
-
 
