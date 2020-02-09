@@ -98,6 +98,7 @@ public:
 #include<string>
 using namespace std;
 
+//POST: creates an array of strings of size 2 in dynamic memory, sets maximum size to 2, and current size to 0
 StringSet::StringSet()
 {	
 	maxSize = 2; 
@@ -105,6 +106,7 @@ StringSet::StringSet()
 	curSize = 0; 
 }
 
+// POST: creates a deep copy of its parameter
 StringSet::StringSet(const StringSet& set)
 {
 	maxSize = set.maxSize;
@@ -113,6 +115,10 @@ StringSet::StringSet(const StringSet& set)
 	for (int i = 0; i < curSize; i++)
 		s[i] = set.s[i];
 }
+
+// Destructor
+//PRE: string array is non-empty
+//POST: De-allocates dynamic memory associated with object
 StringSet::~StringSet() 
 { 
 	if (s != NULL)
@@ -122,6 +128,9 @@ StringSet::~StringSet()
 		curSize = 0;
 	}
 }
+
+//PRE: the parameter is different from the calling object, and string array is non-empty
+//POST: creates a deep copy of its parameter, assigns it to the calling object
 StringSet& StringSet::operator=(const StringSet& set)
 {
 	if (this == &set)
@@ -135,6 +144,9 @@ StringSet& StringSet::operator=(const StringSet& set)
 		s[i] = set.s[i];
 	return *this;
 }
+
+// POST: returns false without inserting value if a string matching the parameter
+//is already in the array, otherwise: inserts the string parameter at the next available index
 bool StringSet::insert(string str)
 {
 	for (int i = 0; i < curSize; i++)
@@ -143,12 +155,9 @@ bool StringSet::insert(string str)
 	if (curSize == maxSize)
 	{
 		//Store data
-		string* temp = new string[maxSize];
-		for (int i = 0; i < curSize; i++)
-			temp[i] = s[i];
+		string* temp = s;
 		//Expand capacity
 		maxSize *= 2;
-		delete[] s;
 		//Reallocate memory
 		s = new string[maxSize];
 		//Restore previous content
@@ -156,10 +165,13 @@ bool StringSet::insert(string str)
 			s[i] = temp[i];
 		delete[] temp;
 	}
-	s[curSize] = str;
-	curSize++;
+	s[curSize++] = str;
 	return true;
 }
+
+//POST: returns false if a string matching the parameter is not in the array,
+//otherwise: replaces matching string with the last string in the array(if there is one);
+//decrements current sizeand returns true
 bool StringSet::remove(string str)
 {
 	int n = find(str);     
@@ -171,6 +183,8 @@ bool StringSet::remove(string str)
 	s[curSize] = "";
 	return true;
 }
+
+//POST: if a string matching the parameter is in the array returns the index of that string, otherwise returns - 1
 int StringSet::find(string str)const
 {
 	for (int i = 0; i < curSize; i++)
@@ -178,10 +192,14 @@ int StringSet::find(string str)const
 			return i;
 	return -1;
 }
+
+//POST: returns the current size(the number of strings in the array)
 int StringSet::size() const
 {
 	return curSize;
 }
+
+//POST: returns a StringSet object that contains the union of the calling objectand the parameter
 StringSet StringSet::unions(const StringSet& set) const
 {
 	StringSet ans;
@@ -193,6 +211,8 @@ StringSet StringSet::unions(const StringSet& set) const
 		ans.curSize = 0;
 	return ans;
 }
+
+//POST: returns a StringSet object that contains the intersection of the calling objectand the parameter
 StringSet StringSet::intersection(const StringSet& str) const
 {
 	StringSet ans;
@@ -201,6 +221,8 @@ StringSet StringSet::intersection(const StringSet& str) const
 			ans.insert(s[i]);
 	return ans;
 }
+
+//POST: returns a StringSet object that contains the set difference of the calling objectand the parameter
 StringSet StringSet::difference(const StringSet& str) const
 {
 	StringSet ans(*this);
