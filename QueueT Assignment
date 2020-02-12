@@ -1,0 +1,239 @@
+#pragma once
+#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+template <class T>
+class NodeT
+{
+public:
+	// Constructors and destructor
+	NodeT() : data(0), next(NULL) {};
+	NodeT(T value) : data(value), next(nullptr) {};
+	NodeT(T value, NodeT* nd) : data(value), next(nd) {};
+	~NodeT() {};
+
+	// Attributes
+	T data;
+	NodeT* next;
+};
+
+template <class T>
+class QueueT
+{
+private: 
+	NodeT<T>* head,*tail;
+	int curSize;
+public:
+	QueueT();
+	QueueT(const QueueT& q);
+	~QueueT();
+	QueueT<T>& operator=(const QueueT& q);
+	void enqueue(T value);
+	T dequeue();
+	void print()const;
+	bool empty()const;
+	int size()const;
+	void concatenate(QueueT& q, int n);
+	QueueT<T> merge(const QueueT& q);
+	NodeT<T>* getFront();
+};
+
+
+
+#include "QueueT.h"
+#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+// Default contructor
+template<class T>
+QueueT<T>::QueueT()
+{
+	head = tail = NULL;
+	curSize = 0;
+}
+
+// Copy constructor
+template <class T>
+QueueT<T>::QueueT(const QueueT& q)
+{
+	*this = q;
+}
+
+template <class T>
+// Destructor
+//POST: deallocates memory associated with queue
+QueueT<T>::~QueueT()
+{
+	NodeT<T>* temp = head;
+	while (head != NULL) {
+		head = head->next;
+		delete temp;
+		temp = head;
+	}
+	curSize = 0;
+}
+
+template <class T>
+// Overloaded assignment operator
+QueueT<T>& QueueT<T>::operator=(const QueueT& q)
+{
+	if (this != &q) {
+		this->~QueueT();
+		head = tail = NULL;
+		curSize = q.curSize;
+		if (q.head != NULL) {
+			NodeT<T>* original = q.head;
+			head = new NodeT<T>(original->data);
+			original = original->next;
+			NodeT<T>* copy = head;
+			while (original != NULL) {
+				NodeT<T>* newNodeT = new NodeT<T>(original->data);
+				copy->next = newNodeT;
+				copy = copy->next;
+				original = original->next;
+			}
+			//copy->next = NULL;
+			tail = copy;
+		}
+	}
+	return *this;
+}
+
+//POST: value is inserted at the back of the queue
+template <class T>
+void QueueT<T>::enqueue(T value)
+{
+	NodeT<T>* newNodeT = new NodeT<T>(value);
+	if(head == NULL)
+		head = tail = newNodeT;
+	else 
+		tail = tail->next = newNodeT;
+	curSize++; 
+}
+
+//POST: removes and returns the value at the front of the queue
+template <class T>
+T QueueT<T>::dequeue()
+{
+	if (head == NULL)
+		throw runtime_error("empty queue");
+	NodeT<T>* temp = head;
+	T n = head->data;
+	head = head->next;
+	delete temp;
+	curSize--;
+	return n;
+}
+
+//POST: prints the queue from head to tail
+template <class T>
+void QueueT<T>::print() const
+{
+	NodeT<T>* temp = head;
+	while (temp != nullptr) {
+		cout << temp->data << endl;
+		temp = temp->next;
+	}
+}
+
+//POST: returns true if queue is empty, otherwise false
+template <class T>
+bool QueueT<T>::empty() const
+{
+	return head == nullptr;
+}
+
+//POST: returns number of values in the queue
+template <class T>
+int QueueT<T>::size() const
+{
+	return curSize;
+}
+
+//POST: adds the first n values stored in its QueueT 
+//parameter to the end of the calling object
+template <class T>
+void QueueT<T>::concatenate(QueueT<T>& q, int n)
+{
+	if (n > q.curSize) throw runtime_error("out of range");
+	while (n--)	enqueue(q.dequeue());
+}
+
+//POST: returns a QueueT object that contains the contents 
+//of the calling object and its constant QueueT reference parameter
+template <class T>
+QueueT<T> QueueT<T>::merge(const QueueT& q)
+{
+	QueueT<T> ans;
+	NodeT<T>* temp1 = head;
+	NodeT<T>* temp2 = q.head;
+	while (temp1 != NULL && temp2 != NULL) {
+		ans.enqueue(temp1->data);
+		ans.enqueue(temp2->data);
+		temp1 = temp1->next;
+		temp2 = temp2->next;
+	}
+	while (temp1 != NULL) {
+		ans.enqueue(temp1->data);
+		temp1 = temp1->next;
+	}
+	while (temp2 != NULL) {
+		ans.enqueue(temp2->data);
+		temp2 = temp2->next;
+	}
+	return ans;
+}
+
+//POST: returns a pointer to the node at the front of the queue
+template <class T>
+NodeT<T>* QueueT<T>::getFront() 
+{ 
+	return head; 
+}
+
+#include "QueueT.h"
+#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+int main()
+{
+	QueueT<int> q1;
+	q1.enqueue(2);
+	q1.enqueue(4);
+	q1.enqueue(6);
+	cout << "empty: 0 = " << q1.empty() << endl;
+	cout << "print: {2,4,6} = ";
+	q1.print();
+	cout << endl << "size: 3 = " << q1.size() << endl;
+	QueueT<int> q2(q1);
+	QueueT<int> q3;
+	q3 = q1;
+	q1.dequeue();
+	cout << "q1 post copy: {4,6} = ";
+	q1.print();
+	cout << endl << "q2 (copy): {2,4,6} = ";
+	q2.print();
+	cout << endl << "q3 (op=): {2,4,6} = ";
+	q3.print();
+	QueueT<int> q4;
+	q4.enqueue(5);
+	QueueT<int> q5(q1.merge(q4));
+	cout << endl << "q5 (merge): {4,5,6} = ";
+	q5.print();
+	q1.concatenate(q4, 1);
+	cout << endl << "q1 (concatenate): {4,6,5} = ";
+	q1.print();
+	NodeT<int>* front = q1.getFront();
+	cout << endl << "front->next->data: 6 = " << front->next->data;
+
+
+	system("Pause");
+	return 0;
+
+}
+
+
+
