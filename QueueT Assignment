@@ -1,4 +1,4 @@
-#pragma once
+
 #include <iostream>
 #include <stdexcept>
 using namespace std;
@@ -24,6 +24,7 @@ class QueueT
 private: 
 	NodeT<T>* head,*tail;
 	int curSize;
+	void deleteQueueT();
 public:
 	QueueT();
 	QueueT(const QueueT& q);
@@ -37,14 +38,9 @@ public:
 	void concatenate(QueueT& q, int n);
 	QueueT<T> merge(const QueueT& q);
 	NodeT<T>* getFront();
+
+
 };
-
-
-
-#include "QueueT.h"
-#include <iostream>
-#include <stdexcept>
-using namespace std;
 
 // Default contructor
 template<class T>
@@ -62,9 +58,7 @@ QueueT<T>::QueueT(const QueueT& q)
 }
 
 template <class T>
-// Destructor
-//POST: deallocates memory associated with queue
-QueueT<T>::~QueueT()
+void QueueT<T>::deleteQueueT()
 {
 	NodeT<T>* temp = head;
 	while (head != NULL) {
@@ -76,27 +70,35 @@ QueueT<T>::~QueueT()
 }
 
 template <class T>
+// Destructor
+//POST: deallocates memory associated with queue
+QueueT<T>::~QueueT()
+{
+	deleteQueueT();
+}
+
+template <class T>
 // Overloaded assignment operator
 QueueT<T>& QueueT<T>::operator=(const QueueT& q)
 {
-	if (this != &q) {
-		this->~QueueT();
-		head = tail = NULL;
-		curSize = q.curSize;
-		if (q.head != NULL) {
-			NodeT<T>* original = q.head;
-			head = new NodeT<T>(original->data);
+	if (this == &q) 
+		return *this;
+	deleteQueueT();
+	head = tail = NULL;
+	curSize = q.curSize;
+	if (q.head != NULL) {
+		NodeT<T>* original = q.head;
+		head = new NodeT<T>(original->data);
+		original = original->next;
+		NodeT<T>* copy = head;
+		while (original != NULL) {
+			NodeT<T>* newNodeT = new NodeT<T>(original->data);
+			copy->next = newNodeT;
+			copy = copy->next;
 			original = original->next;
-			NodeT<T>* copy = head;
-			while (original != NULL) {
-				NodeT<T>* newNodeT = new NodeT<T>(original->data);
-				copy->next = newNodeT;
-				copy = copy->next;
-				original = original->next;
-			}
-			//copy->next = NULL;
-			tail = copy;
 		}
+		//copy->next = NULL;
+		tail = copy;
 	}
 	return *this;
 }
@@ -193,11 +195,6 @@ NodeT<T>* QueueT<T>::getFront()
 	return head; 
 }
 
-#include "QueueT.h"
-#include <iostream>
-#include <stdexcept>
-using namespace std;
-
 int main()
 {
 	QueueT<int> q1;
@@ -234,6 +231,3 @@ int main()
 	return 0;
 
 }
-
-
-
