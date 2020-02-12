@@ -25,6 +25,7 @@ private:
 	NodeT<T>* head,*tail;
 	int curSize;
 	void deleteQueueT();
+	void deepcopy(const QueueT& q);
 public:
 	QueueT();
 	QueueT(const QueueT& q);
@@ -77,13 +78,8 @@ QueueT<T>::~QueueT()
 	deleteQueueT();
 }
 
-template <class T>
-// Overloaded assignment operator
-QueueT<T>& QueueT<T>::operator=(const QueueT& q)
+void QueueT<T>::deepcopy(const QueueT& q)
 {
-	if (this == &q) 
-		return *this;
-	deleteQueueT();
 	head = tail = NULL;
 	curSize = q.curSize;
 	if (q.head != NULL) {
@@ -99,6 +95,16 @@ QueueT<T>& QueueT<T>::operator=(const QueueT& q)
 		}
 		//copy->next = NULL;
 		tail = copy;
+	}
+}
+
+template <class T>
+// Overloaded assignment operator
+QueueT<T>& QueueT<T>::operator=(const QueueT& q)
+{
+	if (this != &q) {
+		deleteQueueT();
+		deepcopy(q);
 	}
 	return *this;
 }
