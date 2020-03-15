@@ -1,0 +1,136 @@
+#include "HashTable.h"
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+
+bool HashTable::isPrime(int n)
+{
+	if (n <= 3) 
+		return n >= 2;
+	if (n % 6 != 1 && n % 6 != 5) 
+		return false;
+	for (int i = 5; i*i <= n; i+=6)
+		if (n % i == 0 || n % (i + 2) == 0)
+			return false;
+	return true;
+}
+int HashTable::nextPrime(int n)
+{
+	for (int i = n;; i += 2)
+		if (isPrime(i))
+			return i;
+}
+int HashTable::hash1(string str)const
+{
+	int ans = 0, base = 32,len=str.length();
+	for (int i = 0; i < len; i++)
+		ans = (ans * base + (str[i]-'a'+1)) % tableSize;
+	return ans;
+}
+int HashTable::hash2(int key)const
+{
+	return prime - key % prime;
+}
+
+HashTable::HashTable()
+{
+	tableSize = 101;
+	string* s=new string[tableSize];
+	int n = tableSize / 2;
+	prime = (n % 2) ? nextPrime(n + 2) : nextPrime(n + 1);
+}
+HashTable::HashTable(int n)
+{
+	curSize = n;
+	tableSize = nextPrime(2 * n + 1);
+	string* s = new string[tableSize];
+	int m = tableSize / 2;
+	prime = (m % 2) ? nextPrime(m + 2) : nextPrime(m + 1);
+}
+HashTable::HashTable(const HashTable& h)
+{
+	tableSize = h.tableSize;
+	prime = h.prime;
+	curSize = h.curSize;
+	string* s = new string[tableSize];
+	for (int i = 0; i < tableSize; i++)
+		s[i] = h.s[i];
+}
+HashTable::~HashTable()
+{
+	if (s != NULL)
+		delete[] s;
+	curSize = 0;
+}
+HashTable& HashTable::operator=(const HashTable& h)
+{
+	if (this == &h) return *this;
+	if (s != NULL) delete[] s;
+	tableSize = h.tableSize;
+	prime = h.prime;
+	curSize = h.curSize;
+	string* s = new string[tableSize];
+	for (int i = 0; i < tableSize; i++)
+		s[i] = h.s[i];
+	return *this;
+}
+void HashTable::insert(string str)
+{
+	if (find(str)) throw exception("existed");
+	int index = hash1(str), d = hash2(index);
+	while (s[index] != "")
+		index = (index + d) % tableSize;
+	s[index] = str;
+	curSize++;
+	
+	double load = loadFactor();
+	if (load - 0.67 >= eps) {
+		int oldSize = tableSize;
+		tableSize = nextPrime(2 * tableSize + 1);
+		string* temp = s;
+		s = new string[tableSize];
+		int n = tableSize / 2;
+		prime = (n % 2) ? nextPrime(n + 2) : nextPrime(n + 1);
+		for (int i = 0; i < oldSize; i++)
+			if (temp[i] != "") {
+				index = hash1(temp[i]),d = hash2(index);
+				while (s[index] != "")
+					index = (index + d) % tableSize;
+				s[index] = temp[i];
+			}
+		delete temp;
+	}
+}
+bool HashTable::find(string str)const
+{
+	int i = hash1(str);
+	if (s[i].length()==0) return false;
+	int d = hash2(i);
+	while (s[i] != str){	
+		i = (i + d) % tableSize;
+		if (s[i] == "" || i == hash1(str))
+			return false;
+	}
+	return true;
+}
+int HashTable::curNum()
+{
+	return curSize;
+}
+int HashTable::getSize() 
+{
+	return tableSize;
+}
+double HashTable::loadFactor()
+{
+	return (double)curSize / tableSize;
+}
+
+void HashTable::print()
+{
+	for (int i = 0; i < tableSize; i++)
+		if (s[i] != "")
+			cout << i << " " << s[i] << endl;
+	cout << endl;
+}
