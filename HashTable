@@ -1,9 +1,185 @@
+#pragma once
 #include "HashTable.h"
 #include<iostream>
 #include<string>
 #include<vector>
+#include <iterator>
+#include <fstream>
+using namespace std;
+typedef vector<string> vs;
+
+class spellcheck
+{
+public:
+	//if word is not in ht returns all strings in ht 
+	//that can be made by deleting a single letter from word
+	vector<string> extraLetter(const HashTable& ht, string word)
+	{
+		vs v;
+		if (ht.find(word)) {
+			v.push_back(word);
+			return v;
+		}
+		int len = word.length();
+		if (len == 1) return v;
+		for (int i = 0; i < len; i++)
+		{
+			string temp(word);
+			temp.erase(temp.begin() + i);
+			if (ht.find(temp))
+				v.push_back(temp);
+		}
+		return v;
+	}
+
+//if word is not in ht returns all strings in ht 
+//that can be made swapping any two neighbouring letters in word
+
+	vector<string> transposition(const HashTable& ht, string word)
+	{
+		vs v;
+		if (ht.find(word)) {
+			v.push_back(word);
+			return v;
+		}
+		int len = word.length();
+		if (len == 1) return v;
+		for (int i = 1; i < len; i++)
+		{
+			string temp(word);
+			char ch = temp[i - 1];
+			temp[i - 1] = temp[i];
+			temp[i] = ch;
+			if (ht.find(temp))
+				v.push_back(temp);
+		}
+		return v;
+	}
+
+//if word is not in ht returns all pairs of strings in ht that can be made by
+//inserting a single space in word
+	vector<string> missingSpace(const HashTable& ht, string word)
+	{
+		vs v;
+		if (ht.find(word)) {
+			v.push_back(word);
+			return v;
+		}
+		int len = word.length();
+		if (len == 1) return v;
+		for (int i = 1; i < len; i++)
+		{
+			string s1 = word.substr(0, i);
+			string s2 = word.substr(i, len - i);
+			if (ht.find(s1) && ht.find(s2))
+				v.push_back(s1 + " " + s2);
+		}
+		return v;
+	}
+
+//if word is not in ht returns all strings in ht that can be 
+//made by inserting any	single letter of the alphabet at any position in word
+	vector<string> missingLetter(const HashTable& ht, string word)
+	{
+		vs v;
+		if (ht.find(word)) {
+			v.push_back(word);
+			return v;
+		}
+		int len = word.length();
+		if (len == 0) return v;
+		for (int i = 0; i <= len; i++)
+			for (int j = 0; j < 26; j++)
+			{
+				string temp(word);
+				char ch = 'a' + j;
+				if (i < len)
+					temp.insert(temp.begin() + i, ch);
+				else
+					temp+=ch;
+				if (ht.find(temp))
+					v.push_back(temp);
+			}
+		return v;
+	}
+
+//if word is not in ht returns all strings in ht that can be made by changing any
+//single letter of word to a different letter in the alphabet
+	vector<string> incorrectLetter(const HashTable& ht, string word)
+	{
+		vs v;
+		if (ht.find(word)) {
+			v.push_back(word);
+			return v;
+		}
+		int len = word.length();
+		if (len == 0) return v;
+		for (int i = 0; i < len; i++)
+			for (int j = 0; j < 26; j++)
+			{
+				string temp(word);
+				char ch = 'a' + j;
+				temp[i] = ch;
+				if (ht.find(temp))
+					v.push_back(temp);
+			}
+		return v;
+	}
+
+
+// Opens a file and reads the contents into a vector
+// PARAM: infile = name of the file to be opened
+// PRE: the file contains words separated by white space
+// POST: returns a vector containing the contents of infile
+	vector<string> readFile(string infile)
+	{
+		ifstream ist(infile.c_str());
+		if (ist.fail())
+			throw runtime_error(infile + " not found");
+		istream_iterator<string> start(ist), end;
+		vector<string> result(start, end);
+		ist.close();
+		return result;
+	}
+};
+
+
+#pragma once
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+#define eps 1e-6
+
+class HashTable
+{
+private:
+	string* s;
+	int tableSize, prime, curSize; 
+	bool isPrime(int n);
+	int nextPrime(int n);
+	int hash1(string str)const;
+	int hash2(int key)const;
+public:
+	HashTable();
+	HashTable(int n);
+	HashTable(const HashTable& h);
+	~HashTable();
+	HashTable& operator=(const HashTable& h);
+	void insert(string str);
+	bool find(string str)const;
+	int size()const;
+	int maxSize()const;
+	double loadFactor()const;
+	void print();
+};
+
+#include "HashTable.h"
+#include<iostream>
+#include<string>
 using namespace std;
 
+//return true if n is a prime otherwise false
 bool HashTable::isPrime(int n)
 {
 	if (n <= 3) 
@@ -15,6 +191,7 @@ bool HashTable::isPrime(int n)
 			return false;
 	return true;
 }
+//return a smallest prime greater than n
 int HashTable::nextPrime(int n)
 {
 	for (int i = n;; i += 2)
@@ -32,37 +209,42 @@ int HashTable::hash2(int key)const
 {
 	return prime - key % prime;
 }
-
+//creates a hash table of default size
 HashTable::HashTable()
 {
 	tableSize = 101;
-	string* s=new string[tableSize];
+	s=new string[tableSize];
 	int n = tableSize / 2;
 	prime = (n % 2) ? nextPrime(n + 2) : nextPrime(n + 1);
 }
+//creates a hash table to store n items 
 HashTable::HashTable(int n)
 {
 	curSize = n;
 	tableSize = nextPrime(2 * n + 1);
-	string* s = new string[tableSize];
+	s = new string[tableSize];
 	int m = tableSize / 2;
 	prime = (m % 2) ? nextPrime(m + 2) : nextPrime(m + 1);
 }
+//– a constructor that creates a deep copy of its 
+//constant HashTable reference parameter
 HashTable::HashTable(const HashTable& h)
 {
 	tableSize = h.tableSize;
 	prime = h.prime;
 	curSize = h.curSize;
-	string* s = new string[tableSize];
+	s = new string[tableSize];
 	for (int i = 0; i < tableSize; i++)
 		s[i] = h.s[i];
 }
+//– de-allocates any dynamic memory associated with the calling object
 HashTable::~HashTable()
 {
 	if (s != NULL)
 		delete[] s;
 	curSize = 0;
 }
+//overloads the assignment operator for HashTable objects
 HashTable& HashTable::operator=(const HashTable& h)
 {
 	if (this == &h) return *this;
@@ -70,20 +252,23 @@ HashTable& HashTable::operator=(const HashTable& h)
 	tableSize = h.tableSize;
 	prime = h.prime;
 	curSize = h.curSize;
-	string* s = new string[tableSize];
+	s = new string[tableSize];
 	for (int i = 0; i < tableSize; i++)
 		s[i] = h.s[i];
 	return *this;
 }
+//inserts the parameter string into the hash table
 void HashTable::insert(string str)
 {
-	if (find(str)) throw exception("existed");
+	if (find(str)) {
+		cout << "existed";
+		return;
+	}
 	int index = hash1(str), d = hash2(index);
 	while (s[index] != "")
 		index = (index + d) % tableSize;
 	s[index] = str;
 	curSize++;
-	
 	double load = loadFactor();
 	if (load - 0.67 >= eps) {
 		int oldSize = tableSize;
@@ -99,13 +284,15 @@ void HashTable::insert(string str)
 					index = (index + d) % tableSize;
 				s[index] = temp[i];
 			}
-		delete temp;
+		delete[] temp;	temp = NULL;
 	}
 }
+//returns true if its string parameter is in the hash table,
+//returns false if it is not
 bool HashTable::find(string str)const
 {
-	int i = hash1(str);
-	if (s[i].length()==0) return false;
+	int i = hash1(str); 
+	if (s[i]=="") return false;
 	int d = hash2(i);
 	while (s[i] != str){	
 		i = (i + d) % tableSize;
@@ -114,23 +301,91 @@ bool HashTable::find(string str)const
 	}
 	return true;
 }
-int HashTable::curNum()
+//returns the number of items stored in the hash table
+int HashTable::size()const
 {
 	return curSize;
 }
-int HashTable::getSize() 
+//returns the size of the hash table’s underlying array
+int HashTable::maxSize() const
 {
 	return tableSize;
 }
-double HashTable::loadFactor()
+double HashTable::loadFactor()const
 {
 	return (double)curSize / tableSize;
 }
-
+//test
 void HashTable::print()
 {
 	for (int i = 0; i < tableSize; i++)
 		if (s[i] != "")
 			cout << i << " " << s[i] << endl;
 	cout << endl;
+}
+
+
+
+#include "HashTable.h"
+#include "spellcheck.h"
+#include<iostream>
+#include<string>
+#include<vector>
+#include<cstdlib>
+#include<ctime>
+#include <fstream>
+using namespace std;
+
+string s[3000];
+int main()
+{
+	HashTable h;
+	srand(time(0));
+	for (int i = 0; i < 1000; i++)
+	{
+		string s1,s2,s3;
+		for (int j = 0; j < 4; j++)
+		{
+			char ch = rand() % 25 + 97;
+			s1 += ch;
+			ch = rand() % 25 + 97;
+			s2 += ch;
+			ch = rand() % 25 + 97;
+			s3 += ch;
+		}
+		s[i] = s1; s[i + 1] = s2; s[i + 2] = s3;
+		
+		/*if (h.hash1(s1) == h.hash1(s2)&& h.hash1(s3) == h.hash1(s2)) {
+			cout << s1 << " " << s2 << " " <<s3<< " " << h.hash1(s2) << endl;
+			h.insert(s1); h.insert(s2); h.insert(s3);
+			h.find(s1); h.find(s2); h.find(s3);
+		}*/
+	}
+	
+	//h.print();
+
+	string file = "C:/Users/a9966/Desktop/w.txt";
+	ifstream fin(file);
+	if (fin.fail()) {
+		cout << "Input stream is fail" << endl;
+		return 0;
+	}
+	spellcheck spell;
+	vs v = spell.readFile(file);
+	HashTable h;
+	int size = v.size();
+	for (int i = 0; i < size; i++)
+		h.insert(v[i]);
+	string s4 = "bble";
+	vs v1 = spell.extraLetter(h, s4);
+	vs v2 = spell.transposition(h, s4);
+	vs v3 = spell.missingSpace(h, s4);
+	vs v4 = spell.missingLetter(h, s4);
+	vs v5 = spell.incorrectLetter(h, s4);
+
+	for (auto& i : v1)
+		cout << i << endl;
+	
+	system("Pause");
+	return 0;
 }
