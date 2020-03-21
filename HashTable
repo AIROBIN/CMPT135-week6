@@ -1,3 +1,5 @@
+#ifndef _SPELLCHECK_H
+#define _SPELLCHECK_H
 #include "HashTable.h"
 #include<iostream>
 #include<string>
@@ -5,13 +7,13 @@
 #include <iterator>
 #include <fstream>
 using namespace std;
-typedef vector<string> vs;
+
 
 	//if word is not in ht returns all strings in ht 
 	//that can be made by deleting a single letter from word
 	vector<string> extraLetter(const HashTable& ht, string word)
 	{
-		vs v;
+		vector<string> v;
 		if (ht.find(word)) {
 			v.push_back(word);
 			return v;
@@ -28,12 +30,12 @@ typedef vector<string> vs;
 		return v;
 	}
 
-//if word is not in ht returns all strings in ht 
-//that can be made swapping any two neighbouring letters in word
+	//if word is not in ht returns all strings in ht 
+	//that can be made swapping any two neighbouring letters in word
 
 	vector<string> transposition(const HashTable& ht, string word)
 	{
-		vs v;
+		vector<string> v;
 		if (ht.find(word)) {
 			v.push_back(word);
 			return v;
@@ -52,11 +54,11 @@ typedef vector<string> vs;
 		return v;
 	}
 
-//if word is not in ht returns all pairs of strings in ht that can be made by
-//inserting a single space in word
+	//if word is not in ht returns all pairs of strings in ht that can be made by
+	//inserting a single space in word
 	vector<string> missingSpace(const HashTable& ht, string word)
 	{
-		vs v;
+		vector<string> v;
 		if (ht.find(word)) {
 			v.push_back(word);
 			return v;
@@ -73,11 +75,11 @@ typedef vector<string> vs;
 		return v;
 	}
 
-//if word is not in ht returns all strings in ht that can be 
-//made by inserting any	single letter of the alphabet at any position in word
+	//if word is not in ht returns all strings in ht that can be 
+	//made by inserting any	single letter of the alphabet at any position in word
 	vector<string> missingLetter(const HashTable& ht, string word)
 	{
-		vs v;
+		vector<string> v;
 		if (ht.find(word)) {
 			v.push_back(word);
 			return v;
@@ -92,18 +94,18 @@ typedef vector<string> vs;
 				if (i < len)
 					temp.insert(temp.begin() + i, ch);
 				else
-					temp+=ch;
+					temp += ch;
 				if (ht.find(temp))
 					v.push_back(temp);
 			}
 		return v;
 	}
 
-//if word is not in ht returns all strings in ht that can be made by changing any
-//single letter of word to a different letter in the alphabet
+	//if word is not in ht returns all strings in ht that can be made by changing any
+	//single letter of word to a different letter in the alphabet
 	vector<string> incorrectLetter(const HashTable& ht, string word)
 	{
-		vs v;
+		vector<string> v;
 		if (ht.find(word)) {
 			v.push_back(word);
 			return v;
@@ -123,10 +125,10 @@ typedef vector<string> vs;
 	}
 
 
-// Opens a file and reads the contents into a vector
-// PARAM: infile = name of the file to be opened
-// PRE: the file contains words separated by white space
-// POST: returns a vector containing the contents of infile
+	// Opens a file and reads the contents into a vector
+	// PARAM: infile = name of the file to be opened
+	// PRE: the file contains words separated by white space
+	// POST: returns a vector containing the contents of infile
 	vector<string> readFile(string infile)
 	{
 		ifstream ist(infile.c_str());
@@ -137,6 +139,8 @@ typedef vector<string> vs;
 		ist.close();
 		return result;
 	}
+
+#endif
 
 
 #ifndef  __HASHTABLE_H__
