@@ -1,4 +1,3 @@
-#pragma once
 #include "HashTable.h"
 #include<iostream>
 #include<string>
@@ -8,9 +7,6 @@
 using namespace std;
 typedef vector<string> vs;
 
-class spellcheck
-{
-public:
 	//if word is not in ht returns all strings in ht 
 	//that can be made by deleting a single letter from word
 	vector<string> extraLetter(const HashTable& ht, string word)
@@ -141,10 +137,10 @@ public:
 		ist.close();
 		return result;
 	}
-};
 
 
-#pragma once
+#ifndef  __HASHTABLE_H__
+#define   __HASHTABLE_H__
 #include<iostream>
 #include<string>
 #include<vector>
@@ -173,6 +169,7 @@ public:
 	double loadFactor()const;
 	void print();
 };
+#endif
 
 #include "HashTable.h"
 #include<iostream>
