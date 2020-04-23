@@ -1,0 +1,563 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+template<class T>
+class NodeT {
+public:
+	T data;
+	NodeT* left, * right, * parent;
+	bool isBlack;
+
+	NodeT() :data(0), left(NULL), right(NULL), parent(NULL), isBlack(false) {}
+	NodeT(T value) :data(value), left(NULL), right(NULL), parent(NULL), isBlack(false) {}
+};
+
+template<class T>
+class RedBlackTree {
+private:
+	NodeT<T>* root;
+	int curSize;
+
+	bool getColor(NodeT<T>*& n);
+	void setColor(NodeT<T>*& n, bool x);
+	NodeT<T>* copyTree(NodeT<T>* n);
+	void deleteTree(NodeT<T>*& n);
+	NodeT<T>* find(T x);
+	void rotateLeft(NodeT<T>* n);
+	void rotateRight(NodeT<T>* n);
+	bool removeNode(NodeT<T>*& Root, NodeT<T>* n);
+	void removeFixup(NodeT<T>*& Root, NodeT<T>* n, NodeT<T>* p);
+	void inorder(NodeT<T>*& n, vector<T>& v, T a, T b);
+
+	NodeT<T>* insertBST(NodeT<T>*& root, NodeT<T>*& ptr);
+	void fixInsertRBTree(NodeT<T>*& ptr);
+
+
+public:
+	RedBlackTree();
+	RedBlackTree(const RedBlackTree& t);
+	RedBlackTree& operator=(const RedBlackTree& t);
+	~RedBlackTree();
+	bool insert(T x);
+	bool remove(T x);
+	bool search(T x);
+	vector<T> search(T a, T b);
+	vector<T> dump();
+	int size();
+	NodeT<T>* getRoot();
+
+	void print(NodeT<T>*& n);
+	void print();
+
+};
+template<class T>
+void RedBlackTree<T>::setColor(NodeT<T>*& n, bool x)
+{
+	if (!n) return;
+	n->isBlack = x;
+}
+template<class T>
+bool RedBlackTree<T>::getColor(NodeT<T>*& n)
+{
+	if (!n) return 1;
+	return n->isBlack;
+}
+
+template<class T>
+NodeT<T>* RedBlackTree<T>::copyTree(NodeT<T>* n)
+{
+	if (!n) return NULL;
+	NodeT<T>* nd = new NodeT<T>(n->data);
+	nd->data = n->data;
+	nd->isBlack = n->isBlack;
+	nd->parent = n->parent;
+	nd->left = copyTree(n->left);
+	nd->right = copyTree(n->right);
+	return nd;
+}
+
+template<class T>
+void RedBlackTree<T>::deleteTree(NodeT<T>*& n)
+{
+	if (n) {
+		deleteTree(n->left);
+		deleteTree(n->right);
+		delete n;
+	}
+	n = NULL;
+}
+
+template<class T>
+void RedBlackTree<T>::rotateLeft(NodeT<T>* n)    //  n    ->  t    counterclockwise
+{												//      t     n
+	NodeT<T>* t = n->right;
+	n->right = t->left;
+	if (t->left) t->left->parent = n;
+	t->parent = n->parent;
+	if (!n->parent) root = t;
+	else if (n->parent->left == n) n->parent->left = t;
+	else n->parent->right = t;
+	t->left = n;
+	n->parent = t;
+}
+
+template<class T>
+void RedBlackTree<T>::rotateRight(NodeT<T>* n)    //  n    ->  t  clockwise
+{											 //    t             n 
+	NodeT<T>* t = n->left;
+	n->left = t->right;
+	if (t->right) t->right->parent = n;
+	t->parent = n->parent;
+	if (!n->parent) root = t;
+	else if (n->parent->right == n) n->parent->right = t;
+	else n->parent->left = t;
+	t->right = n;
+	n->parent = t;
+
+}
+
+
+
+//creates an empty tree whose root is a null pointer
+template<class T>
+RedBlackTree<T>::RedBlackTree()
+{
+	root = NULL;
+	curSize = 0;
+}
+
+//a constructor that creates a deep copy of its RedBlackTree reference parameter
+template<class T>
+RedBlackTree<T>::RedBlackTree(const RedBlackTree<T>& t)
+{
+	curSize = t.curSize;
+	root = copyTree(t.root);
+}
+
+//overloads the assignment operator for RedBlackTree objects 
+template<class T>
+RedBlackTree<T>& RedBlackTree<T>::operator=(const RedBlackTree<T>& t)
+{
+	if (this != &t) {
+		deleteTree(root);
+		root = copyTree(t.root);
+		curSize = t.curSize;
+	}
+	return *this;
+}
+
+//deletes dynamic memory allocated by the tree
+template<class T>
+RedBlackTree<T>::~RedBlackTree()
+{
+	deleteTree(root);
+	curSize = 0;
+}
+
+//inserts the parameterand returns true; 
+//otherwise does not insert the parameterand returns false
+
+template<class T>
+bool RedBlackTree<T>::insert(T n)
+{
+	if (search(n)) return false;
+	NodeT<T>* node = new NodeT<T>(n);
+	root = insertBST(root, node);
+	fixInsertRBTree(node);
+	curSize++;
+	return true;
+}
+
+template<class T>
+NodeT<T>* RedBlackTree<T>::insertBST(NodeT<T>*& root, NodeT<T>*& ptr)
+{
+	if (!root) return ptr;
+	if (ptr->data < root->data) {
+		root->left = insertBST(root->left, ptr);
+		root->left->parent = root;
+	}
+	else if (ptr->data > root->data) {
+		root->right = insertBST(root->right, ptr);
+		root->right->parent = root;
+	}
+	return root;
+}
+
+template<class T>
+void RedBlackTree<T>::fixInsertRBTree(NodeT<T>*& ptr)
+{
+	bool BLACK = 1, RED = 0;
+	NodeT<T>* parent = nullptr, * grandparent = nullptr;
+	while (ptr != root && getColor(ptr) == RED && getColor(ptr->parent) == RED) {
+		parent = ptr->parent;
+		grandparent = parent->parent;
+		if (parent == grandparent->left) {
+			NodeT<T>* uncle = grandparent->right;
+			if (getColor(uncle) == RED) {
+				setColor(uncle, BLACK);
+				setColor(parent, BLACK);
+				setColor(grandparent, RED);
+				ptr = grandparent;
+			}
+			else {
+				if (ptr == parent->right) {
+					rotateLeft(parent);
+					ptr = parent;
+					parent = ptr->parent;
+				}
+				rotateRight(grandparent);
+				bool t = parent->isBlack;
+				parent->isBlack = grandparent->isBlack;
+				grandparent->isBlack = t;
+				ptr = parent;
+			}
+		}
+		else {
+			NodeT<T>* uncle = grandparent->left;
+			if (getColor(uncle) == RED) {
+				setColor(uncle, BLACK);
+				setColor(parent, BLACK);
+				setColor(grandparent, RED);
+				ptr = grandparent;
+			}
+			else {
+				if (ptr == parent->left) {
+					rotateRight(parent);
+					ptr = parent;
+					parent = ptr->parent;
+				}
+				rotateLeft(grandparent);
+				bool t = parent->isBlack;
+				parent->isBlack = grandparent->isBlack;
+				grandparent->isBlack = t;
+				ptr = parent;
+			}
+		}
+	}
+	setColor(root, BLACK);
+}
+
+//remove the item
+template<class T>
+bool RedBlackTree<T>::remove(T x)
+{
+	NodeT<T>* n = find(x);
+	if (n) return removeNode(root, n);
+	else return false;
+
+}
+
+template<class T>
+bool RedBlackTree<T>::removeNode(NodeT<T>*& Root, NodeT<T>* n)
+{
+	NodeT<T>* c, * p;//child parent
+	bool color;
+	//have two children
+	if (n->left && n->right)
+	{
+		//The successor of the deleted node
+		//Use it to replace the "deleted node" position, 
+		//and then remove the "deleted node".
+		NodeT<T>* replace = n;
+		//Get successor node
+		replace = replace->right;
+		while (replace->left)
+			replace = replace->left;
+		//node is not root (only the root does not have a parent node)
+		if (n->parent) {
+			if (n->parent->left == n)
+				n->parent->left = replace;
+			else
+				n->parent->right = replace;
+		}
+		else
+			// n is root
+			Root = replace;
+		// child is the right child of the replacement node
+		c = replace->right;
+		p = replace->parent;
+		// Save the color of the replacement node
+		color = replace->isBlack;
+		// Deleted node is the parent node of its successor node
+		if (p == n) p = replace;
+		else {
+			if (c) c->parent = p;
+			p->left = c;
+			replace->right = n->right;
+			n->right->parent = replace;
+		}
+		replace->parent = n->parent;
+		replace->isBlack = n->isBlack;
+		replace->left = n->left;
+		n->left->parent = replace;
+		if (color == 1)//black
+			removeFixup(Root, c, p);
+		delete n;
+		return true;
+	}
+	if (n->left) c = n->left;
+	else c = n->right;
+	p = n->parent;
+	color = n->isBlack;
+	if (c) c->parent = p;
+	// node is not root
+	if (p)
+		if (p->left == n) p->left = c;
+		else p->right = c;
+	else
+		Root = c;
+	if (color == 1)
+		removeFixup(Root, c, p);
+	delete n;
+	curSize--;
+	return true;
+}
+
+template<class T>
+void RedBlackTree<T>::removeFixup(NodeT<T>*& Root, NodeT<T>* n, NodeT<T>* p)
+{
+	NodeT<T>* t;//temp
+	while ((!n || n->isBlack) && n != Root)
+	{
+		if (p->left == n)
+		{
+			t = p->right;
+			if (t && t->isBlack == 0)
+			{
+				// Case 1: temp's brother  is red
+				t->isBlack = 1;
+				p->isBlack = 0;
+				rotateLeft(p);
+				t = p->right;
+			}
+			if ((!t->left || t->left->isBlack) && (!t->right || t->right->isBlack))
+			{
+				// Case 2: temp's brother is black, and brother's two children are black  
+				t->isBlack = 0;
+				n = p;
+				p = n->parent;
+			}
+			else
+			{
+				if (!t->right || t->right->isBlack)
+				{
+					// Case 3: temp's brother is black, and brother's left children 
+					// is red and right child is black  
+					t->left->isBlack = 1;
+					t->isBlack = 0;
+					rotateRight(t);
+					t = p->right;
+				}
+				// Case 4: temp's brother is black, and brother's left children 
+				// is red and right child is any colorful
+				t->isBlack = p->isBlack;
+				p->isBlack = 1;
+				t->right->isBlack = 1;
+				rotateLeft(p);
+				n = Root;
+				break;
+			}
+		}
+		else
+		{
+			t = p->left;
+			if (t->isBlack == NULL)
+			{
+				// Case 1: temp's brother is red 
+				t->isBlack = 1;
+				p->isBlack = 0;
+				rotateRight(p);
+				t = p->left;
+			}
+			if ((!t->left || t->left->isBlack) && (!t->right || t->right->isBlack))
+			{
+				// Case 2: temp's brother is black, and brother's two children are black 
+				t->isBlack = 0;
+				n = p;
+				p = n->parent;
+			}
+			else
+			{
+				if (!t->left || t->left->isBlack)
+				{
+					// Case 3: temp's brother is black, and brother's left children 
+					// is red and right child is black   
+					t->right->isBlack = 1;
+					t->isBlack = 0;
+					rotateLeft(t);
+					t = p->left;
+				}
+				// Case 4: temp's brother is black, and brother's left children 
+				// is red and right child is any colorful
+				t->isBlack = p->isBlack;
+				p->isBlack = 1;
+				t->left->isBlack = 1;
+				rotateRight(p);
+				n = Root;
+				break;
+			}
+		}
+	}
+	if (n) n->isBlack = 1;
+}
+
+
+
+//searches the tree for the method's single parameter and returns true 
+//if it is found and false otherwise
+template<class T>
+bool RedBlackTree<T>::search(T x)
+{
+	return !(find(x) == NULL);
+}
+
+template<class T>
+NodeT<T>* RedBlackTree<T>::find(T x)
+{
+	NodeT<T>* iter = root;
+	while (iter && iter->data != x)
+		if (x < iter->data) iter = iter->left;
+		else iter = iter->right;
+	return iter;
+}
+
+//returns a vector that contains all of the values 
+//between the method's first and second parameters
+template<class T>
+vector<T> RedBlackTree<T>::search(T a, T b)
+{
+	vector<T> v;
+	inorder(root, v, a, b);
+	return v;
+}
+
+template<class T>
+void RedBlackTree<T>::inorder(NodeT<T>*& n, vector<T>& v, T a, T b)
+{
+	if (!n) return;
+	inorder(n->left, v, a, b);
+	if (n->data >= a && n->data <= b)
+		v.push_back(n->data);
+	inorder(n->right, v, a, b);
+}
+
+//– returns a vector that contains all of the values in the tree
+template<class T>
+vector<T> RedBlackTree<T>::dump()
+{
+	NodeT<T>* min_iter = root, * max_iter = root;
+	while (min_iter->left) min_iter = min_iter->left;
+	while (max_iter->right) max_iter = max_iter->right;
+	return search(min_iter->data, max_iter->data);
+}
+
+//returns the number of items stored in the tree
+template<class T>
+int RedBlackTree<T>::size()
+{
+	return curSize;
+}
+
+//returns a pointer to the tree's root node –
+template<class T>
+NodeT<T>* RedBlackTree<T>::getRoot()
+{
+	return root;
+}
+
+template<class T>
+void RedBlackTree<T>::print(NodeT<T>*& n)
+{
+	if (!n) return;
+	
+	print(n->left);
+	cout << "|" << n->data << " ";// << n->isBlack << "|";
+	print(n->right);
+}
+
+template<class T>
+void RedBlackTree<T>::print()
+{
+	print(root);
+}
+
+
+
+int main() {
+	RedBlackTree<int> rb1;
+	if (rb1.insert(7) == true) {
+		cout << "inserted 7" << endl;
+	}
+	rb1.insert(6);
+	if (rb1.search(6) == true)
+		cout << "inserted 6" << endl;
+	rb1.insert(5);
+	if (rb1.search(5) == true)
+		cout << "inserted 5" << endl;
+	rb1.insert(4);
+	rb1.insert(3);
+	rb1.insert(31);
+	rb1.insert(34);
+	rb1.insert(38);
+	rb1.insert(43);
+	rb1.insert(83);
+	rb1.insert(63);
+	cout << rb1.size() << endl;
+
+	cout << "search element: ";
+	vector<int> sea = rb1.search(31, 38);
+	for (int i = 0; i < sea.size(); i++) {
+		cout << sea[i] << " ";
+	}
+
+	vector<int> v= rb1.dump();
+	cout << "dump: ";
+	rb1.print();
+	cout << endl;
+	for (int i = 0; i < rb1.size(); i++)
+		cout << v[i] << " ";
+
+	cout << endl << endl;
+	if (rb1.remove(3) == true)
+		cout << "remove 3" << endl;
+	cout << "rb1.size() " << rb1.size() << endl;
+
+	//    rb1.print();
+	//    cout<<endl;
+	//    cout<<"find 7: "<<rb1.search(7)<<endl;
+
+	if (rb1.remove(7) == true)
+		cout << "remove 7" << endl;
+	rb1.remove(31);
+	rb1.remove(34);
+	rb1.remove(38);
+	rb1.remove(83);
+	cout << "rb1.size() " << rb1.size() << endl;
+	rb1.print();
+	vector<int>temp = rb1.dump();
+	cout << "temp.size()" << endl;
+	cout << temp.size() << endl;
+	for (int i = 0; i < temp.size(); i++) {
+		cout << temp[i] << endl;
+	}
+
+	RedBlackTree<int> rb2;
+	rb2 = rb1;
+	rb2.insert(31);
+	vector<int>temp1 = rb2.dump();
+	cout << "temp1.size()" << endl;
+	cout << temp1.size() << endl;
+	for (int i = 0; i < temp1.size(); i++) {
+		cout << temp1[i] << endl;
+	}
+
+	rb1.~RedBlackTree();
+	cout << "rb1.size()" << endl;
+	cout << rb1.size() << endl;
+	cout << "clear: " << endl;
+	rb1.print();
+
+
+	return 0;
+}
